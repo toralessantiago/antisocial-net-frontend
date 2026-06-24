@@ -1,12 +1,18 @@
+/* ================= ADAPTACIÓN A TUS VARIABLES GLOBALES ================= */
 .register-layout {
   display: grid;
   grid-template-columns: 1fr;
   min-height: 100vh;
-  background: var(--bg) !important;
+  background: var(--bg) !important; 
   color: var(--text);
-  transition:
-    background 0.3s ease,
-    color 0.3s ease;
+  
+  transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.register-layout *,
+.register-layout ::before,
+.register-layout ::after {
+  transition: background 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out !important;
 }
 
 @media (min-width: 900px) {
@@ -15,7 +21,6 @@
   }
 }
 
-/* Columna Izquierda */
 .register-left {
   display: none;
   background: var(--bg);
@@ -34,7 +39,6 @@
   }
 }
 
-/* Columna Derecha */
 .register-right-container {
   display: flex;
   justify-content: center;
@@ -43,24 +47,21 @@
   width: 100%;
 }
 
-/* El rectángulo central (La Card con opacidad inteligente) */
 .register-right {
   width: 100%;
   max-width: 450px;
   padding: 40px;
   border-radius: 24px;
-  transition: all 0.3s ease;
-
-  /* color-mix para crear la transparencia tanto en claro como en oscuro de forma nativa */
-  background: color-mix(in srgb, var(--bg) 65%, transparent) !important;
+  
+  background: rgba(255, 255, 255, 0.65) !important; /* Modo claro por defecto */
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border) !important;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
 }
 
-/* Ajuste de sombra más pesada si está en modo oscuro */
 [data-bs-theme="dark"] .register-right {
+  background: rgba(15, 15, 15, 0.65) !important; /* Cambia al mismo tiempo sin recalcular color-mix */
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
 }
 
@@ -199,16 +200,11 @@
   color: var(--text);
 }
 
-.custom-select-item:hover {
-  background: var(--accent);
-  color: white;
-}
-
+.custom-select-item:hover,
 .custom-select-item.active {
-  background: color-mix(in srgb, var(--accent) 20%, transparent);
-  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 20%, transparent) !important;
+  color: var(--accent) !important;
 }
-
 /* Botón Registrarte */
 .btn-app {
   height: 48px;
