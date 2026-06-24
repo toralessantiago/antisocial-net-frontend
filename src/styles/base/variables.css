@@ -1,0 +1,17 @@
+:root {
+  --bg: #ffffff;
+  --text: #0f1419;
+  --muted: #536471;
+
+  --accent: #1f8f5f;
+  --border: #cfd9de;
+}
+
+[data-bs-theme="dark"] {
+  --bg: #000000;
+  --text: #e7e9ea;
+  --muted: #71767b;
+
+  --accent: #1f8f5f;
+  --border: #2f3336;
+}

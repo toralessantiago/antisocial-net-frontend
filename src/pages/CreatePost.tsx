@@ -1,3 +1,5 @@
+import "../styles/pages/createPost.css";
+
 function CreatePost() {
   return (
     <div className="container mt-5">

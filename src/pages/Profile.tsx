@@ -1,3 +1,5 @@
+import "../styles/pages/profile.css";
+
 function Profile() {
   return (
     <div className="container mt-5">

@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 
-export const AuthContext = createContext<any>(null);
+export const UserContext = createContext<any>(null);
 
 export const AuthProvider = ({ children }: any) => {
 
@@ -25,8 +25,8 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   return (
-    <AuthContext.Provider value={{user, login, logout}}>
+    <UserContext.Provider value={{user, login, logout}}>
       {children}
-    </AuthContext.Provider>
+    </UserContext.Provider>
   );
 };

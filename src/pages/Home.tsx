@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-
+import "../styles/pages/home.css";
 function Home() {
   return (
     <div className="container mt-5">

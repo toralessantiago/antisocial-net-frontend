@@ -1,3 +1,5 @@
+import "../styles/pages/postDetail.css";
+
 function PostDetail() {
   return (
     <div className="container mt-5">
