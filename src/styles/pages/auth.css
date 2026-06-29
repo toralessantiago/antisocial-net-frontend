@@ -223,12 +223,12 @@
   opacity: 0.9;
 }
 
-.username-wrapper {
+.nickname-wrapper {
   position: relative;
   width: 100%;
 }
 
-.username-prefix {
+.nickname-prefix {
   position: absolute;
   left: 14px;
   top: 50%;
@@ -239,7 +239,7 @@
   align-items: center;
 }
 
-.username-input {
+.nickname-input {
   padding-left: 40px !important;
 }
 

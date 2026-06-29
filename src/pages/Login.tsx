@@ -1,86 +1,104 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
-import { users } from "../data/users";
 import { FaAt, FaEye, FaEyeSlash } from "react-icons/fa";
 import "../styles/pages/auth.css";
 
+const API_URL = "http://localhost:3001/api/users"; 
+
 function Login() {
-  const [nickName, setNickName] = useState("");
+  const [nickname, setNickName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const { login } = useContext(UserContext);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setTouched({ nickname: true, password: true });
 
-    setTouched({ nickName: true, password: true });
-
-    if (!nickName || !password) {
+    if (!nickname || !password) {
       setError("Completa todos los campos");
       return;
     }
 
-    const usuario = users.find((user) => user.nickName === nickName);
-    const passwordCorrecta = password === "123456";
-
-    if (!usuario || !passwordCorrecta) {
+    if (password !== "123456") {
       setError("Usuario o contraseña incorrecta");
       return;
     }
 
-    login(usuario);
-    navigate("/profile");
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(API_URL);
+
+      if (!response.ok) {
+        throw new Error('Error en la respuesta del servidor. Ver detalle: ' + response.status);
+      }
+
+      const jsonResponse = await response.json();
+      const usersArray = jsonResponse.data;
+      
+      const usuario = usersArray.find((user: any) => user.nickname === nickname);
+
+      if (!usuario) {
+        setError("Usuario o contraseña incorrecta");
+        setIsLoading(false);
+        return;
+      }
+
+      login(usuario);
+      navigate("/profile");
+
+    } catch (err) {
+      console.error('Error inesperado:', err);
+      setError("No se pudo conectar con el servidor. Intenta más tarde.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Mismos bordes condicionales: Solo verde si es correcto y completado
   const getBorderClass = (name: string, value: string) => {
     if (!touched[name]) return "";
-    if (error) return "input-error"; // Si hay error global de login, se marcan en rojo
+    if (error) return "input-error";
     return value ? "input-success" : "";
   };
 
   return (
     <div className="register-layout">
-      {/* Columna Izquierda con el mismo diseño del Register */}
       <div className="register-left">
         <h1>¡Hola de nuevo!</h1>
         <p>Inicia sesión para enterarte de lo que suben tus amigos.</p>
       </div>
 
-      {/* Contenedor Derecho translúcido con tus variables globales */}
       <div className="register-right-container">
         <div className="register-right">
           <h2 className="auth-title">Iniciar Sesión</h2>
 
           <form onSubmit={handleSubmit} className="auth-form">
-            
-            {/* USUARIO */}
             <div className="form-group">
               <label className="form-label">Usuario</label>
-              <div className="username-wrapper">
-                <span className="username-prefix">
-                  <FaAt />
-                </span>
+              <div className="nickname-wrapper">
+                <span className="nickname-prefix"><FaAt /></span>
                 <input
                   type="text"
-                  className={`form-control username-input ${getBorderClass("nickName", nickName)}`}
-                  value={nickName}
+                  className={`form-control nickname-input ${getBorderClass("nickname", nickname)}`}
+                  value={nickname}
                   onChange={(e) => {
                     setNickName(e.target.value);
-                    if (error) setError(""); // Limpia el error al escribir
+                    if (error) setError("");
                   }}
-                  onBlur={() => setTouched((p) => ({ ...p, nickName: true }))}
+                  onBlur={() => setTouched((p) => ({ ...p, nickname: true }))}
+                  disabled={isLoading}
                 />
               </div>
             </div>
 
-            {/* CONTRASEÑA */}
             <div className="form-group">
               <label className="form-label">Contraseña</label>
               <div className="password-wrapper">
@@ -90,24 +108,27 @@ function Login() {
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
-                    if (error) setError(""); // Limpia el error al escribir
+                    if (error) setError("");
                   }}
                   onBlur={() => setTouched((p) => ({ ...p, password: true }))}
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
                   className="password-toggle"
                   onClick={() => setShowPassword(!showPassword)}
+                  disabled={isLoading}
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
             </div>
 
-            {/* ERROR GLOBAL DE AUTENTICACIÓN */}
             {error && <small className="text-danger text-center">{error}</small>}
 
-            <button type="submit" className="btn-app w-100">Ingresar</button>
+            <button type="submit" className="btn-app w-100" disabled={isLoading}>
+              {isLoading ? "Ingresando..." : "Ingresar"}
+            </button>
           </form>
         </div>
       </div>

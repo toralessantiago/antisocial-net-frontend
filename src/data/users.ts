@@ -1,11 +1,11 @@
 export interface User {
   id: number;
-  nickName: string;
+  nickname: string;
 }
 
 export const users = [
   {
     id: 1,
-    nickName: "santi"
+    nickname: "santi"
   }
 ];
