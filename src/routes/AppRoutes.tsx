@@ -11,7 +11,6 @@ import ProtectedRoute from "../components/ProtectedRoute";
 function AppRoutes() {
   return (
     <Routes>
-
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
@@ -35,7 +34,6 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-
     </Routes>
   );
 }

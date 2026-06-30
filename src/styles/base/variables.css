@@ -7,11 +7,20 @@
   --border: #cfd9de;
 }
 
-[data-bs-theme="dark"] {
+/*[data-bs-theme="dark"] {
   --bg: #000000;
   --text: #e7e9ea;
   --muted: #71767b;
 
   --accent: #1f8f5f;
   --border: #2f3336;
+}*/
+
+[data-bs-theme="dark"] {
+  --bg: #111418;
+  --text: #f2f3f5;
+  --muted: #9aa4af;
+
+  --accent: #1f8f5f;
+  --border: #30363d;
 }
