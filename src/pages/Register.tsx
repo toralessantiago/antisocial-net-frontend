@@ -3,13 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "../styles/pages/auth.css";
 
+const API_URL = "http://localhost:3001/api/users";
+
 function Register() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [form, setForm] = useState({
-    fullName: "",
+    fullname: "",
     username: "",
     email: "",
     password: "",
@@ -21,8 +24,8 @@ function Register() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [success, setSuccess] = useState("");
+  const [serverError, setServerError] = useState("");
 
-  // MONTH UI
   const [monthQuery, setMonthQuery] = useState("");
   const [monthOpen, setMonthOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -30,20 +33,30 @@ function Register() {
   const monthRef = useRef<HTMLDivElement>(null);
 
   const months = [
-    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
   ];
 
   const currentYear = new Date().getFullYear();
   const minYear = 1926;
   const maxYear = currentYear - 13;
 
-  const fullNameRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
+  const fullnameRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
   const usernameRegex = /^[a-zA-Z0-9._]+$/;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const filteredMonths = months.filter((m) =>
-    m.toLowerCase().includes(monthQuery.toLowerCase())
+    m.toLowerCase().includes(monthQuery.toLowerCase()),
   );
 
   useEffect(() => {
@@ -69,16 +82,19 @@ function Register() {
     let message = "";
 
     switch (name) {
-      case "fullName":
+      case "fullname":
         if (!value) message = "Ingresa tu nombre";
         else if (value.length < 5) message = "Mínimo 5 caracteres";
-        else if (!fullNameRegex.test(value)) message = "Solo letras";
+        else if (value.length > 30) message = "Máximo 30 caracteres";
+        else if (!fullnameRegex.test(value)) message = "Solo letras";
         break;
 
       case "username":
         if (!value) message = "Ingresa usuario";
         else if (value.length < 5) message = "Mínimo 5 caracteres";
-        else if (!usernameRegex.test(value)) message = "Solo letras, números . _";
+        else if (value.length > 20) message = "Máximo 20 caracteres";
+        else if (!usernameRegex.test(value))
+          message = "Solo letras, números . _";
         break;
 
       case "email":
@@ -88,7 +104,8 @@ function Register() {
 
       case "password":
         if (!value) message = "Ingresa contraseña";
-        else if (value.length < 8) message = "Mínimo 8 caracteres";
+        else if (value.length < 6) message = "Mínimo 6 caracteres";
+        else if (value.length > 20) message = "Máximo 20 caracteres";
         break;
 
       case "day":
@@ -104,7 +121,8 @@ function Register() {
       case "year":
         if (!value) message = "Año requerido";
         else if (!/^\d{4}$/.test(value)) message = "Máx 4 números";
-        else if (+value < minYear || +value > maxYear) message = "Fecha inválida";
+        else if (+value < minYear || +value > maxYear)
+          message = "Fecha inválida";
         break;
     }
 
@@ -121,19 +139,13 @@ function Register() {
 
     setForm((p) => ({ ...p, [name]: newValue }));
     validateField(name, newValue);
+    if (serverError) setServerError("");
   };
 
   const getBorderClass = (name: string) => {
-    // Si no ha sido tocado, no lleva borde de estado
     if (!touched[name]) return "";
-    
-    // Si tiene un mensaje de error, va en rojo
     if (errors[name]) return "input-error";
-    
-    // SOLO se pone en verde si tiene contenido (fue completado) Y no tiene errores
     if (form[name as keyof typeof form]) return "input-success";
-    
-    // Si está vacío y sin errores (por ejemplo, borraste todo), queda con borde normal
     return "";
   };
 
@@ -170,10 +182,14 @@ function Register() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setServerError("");
 
-    const allTouched = Object.keys(form).reduce((acc, key) => ({ ...acc, [key]: true }), {});
+    const allTouched = Object.keys(form).reduce(
+      (acc, key) => ({ ...acc, [key]: true }),
+      {},
+    );
     setTouched(allTouched);
 
     let currentErrors: Record<string, string> = {};
@@ -196,8 +212,47 @@ function Register() {
 
     if (hasEmptyFields || Object.values(currentErrors).some(Boolean)) return;
 
-    setSuccess("Registro exitoso");
-    setTimeout(() => navigate("/login"), 1200);
+    setIsLoading(true);
+
+    try {
+      const payload = {
+        fullname: form.fullname,
+        nickname: form.username,
+        email: form.email,
+        password: form.password,
+        birthDate: `${form.year}-${form.month.padStart(2, "0")}-${form.day.padStart(2, "0")}`,
+      };
+
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch (parseError) {
+          errorData = {
+            message: "Error en la solicitud: " + response.statusText,
+          };
+        }
+        throw new Error(
+          errorData.error || errorData.message || "No se pudo crear el usuario",
+        );
+      }
+
+      setSuccess("Registro exitoso. Redirigiendo...");
+      setTimeout(() => navigate("/login"), 1500);
+    } catch (error: any) {
+      console.error("Error del servidor:", error);
+      setServerError(error.message || "Error de conexión. Intenta nuevamente.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const displayMonth = monthOpen
@@ -218,20 +273,21 @@ function Register() {
           <h2 className="auth-title">Crear cuenta</h2>
 
           <form onSubmit={handleSubmit} className="auth-form">
-            {/* FULL NAME */}
             <div className="form-group">
               <label className="form-label">Nombre completo</label>
               <input
-                name="fullName"
-                className={`form-control ${getBorderClass("fullName")}`}
-                value={form.fullName}
+                name="fullname"
+                className={`form-control ${getBorderClass("fullname")}`}
+                value={form.fullname}
                 onChange={handleChange}
-                onBlur={() => setTouched((p) => ({ ...p, fullName: true }))}
+                onBlur={() => setTouched((p) => ({ ...p, fullname: true }))}
+                disabled={isLoading}
               />
-              {errors.fullName && <small className="text-danger">{errors.fullName}</small>}
+              {errors.fullname && (
+                <small className="text-danger">{errors.fullname}</small>
+              )}
             </div>
 
-            {/* USERNAME */}
             <div className="form-group">
               <label className="form-label">Usuario</label>
               <input
@@ -240,11 +296,13 @@ function Register() {
                 value={form.username}
                 onChange={handleChange}
                 onBlur={() => setTouched((p) => ({ ...p, username: true }))}
+                disabled={isLoading}
               />
-              {errors.username && <small className="text-danger">{errors.username}</small>}
+              {errors.username && (
+                <small className="text-danger">{errors.username}</small>
+              )}
             </div>
 
-            {/* EMAIL */}
             <div className="form-group">
               <label className="form-label">Email</label>
               <input
@@ -253,11 +311,13 @@ function Register() {
                 value={form.email}
                 onChange={handleChange}
                 onBlur={() => setTouched((p) => ({ ...p, email: true }))}
+                disabled={isLoading}
               />
-              {errors.email && <small className="text-danger">{errors.email}</small>}
+              {errors.email && (
+                <small className="text-danger">{errors.email}</small>
+              )}
             </div>
 
-            {/* PASSWORD */}
             <div className="form-group">
               <label className="form-label">Contraseña</label>
               <div className="password-wrapper">
@@ -268,19 +328,22 @@ function Register() {
                   value={form.password}
                   onChange={handleChange}
                   onBlur={() => setTouched((p) => ({ ...p, password: true }))}
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
                   className="password-toggle"
                   onClick={() => setShowPassword(!showPassword)}
+                  disabled={isLoading}
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
-              {errors.password && <small className="text-danger">{errors.password}</small>}
+              {errors.password && (
+                <small className="text-danger">{errors.password}</small>
+              )}
             </div>
 
-            {/* FECHA */}
             <div className="form-group">
               <label className="form-label">Fecha de nacimiento</label>
               <div className="birthdate-row">
@@ -291,9 +354,13 @@ function Register() {
                   value={form.day}
                   onChange={handleChange}
                   onBlur={() => setTouched((p) => ({ ...p, day: true }))}
+                  disabled={isLoading}
                 />
 
-                <div ref={monthRef} className="position-relative month-input-container">
+                <div
+                  ref={monthRef}
+                  className="position-relative month-input-container"
+                >
                   <input
                     placeholder="Mes"
                     className={`form-control ${getBorderClass("month")}`}
@@ -305,6 +372,7 @@ function Register() {
                     }}
                     onFocus={() => setMonthOpen(true)}
                     onKeyDown={handleMonthKeyDown}
+                    disabled={isLoading}
                   />
 
                   {monthOpen && (
@@ -331,16 +399,34 @@ function Register() {
                   value={form.year}
                   onChange={handleChange}
                   onBlur={() => setTouched((p) => ({ ...p, year: true }))}
+                  disabled={isLoading}
                 />
               </div>
-              {errors.month && <small className="text-danger">{errors.month}</small>}
-              {errors.day && <small className="text-danger">{errors.day}</small>}
-              {errors.year && <small className="text-danger">{errors.year}</small>}
+              {errors.month && (
+                <small className="text-danger">{errors.month}</small>
+              )}
+              {errors.day && (
+                <small className="text-danger">{errors.day}</small>
+              )}
+              {errors.year && (
+                <small className="text-danger">{errors.year}</small>
+              )}
             </div>
 
-            {success && <div className="text-success">{success}</div>}
+            {serverError && (
+              <div className="text-danger text-center mb-2">{serverError}</div>
+            )}
+            {success && (
+              <div className="text-success text-center mb-2">{success}</div>
+            )}
 
-            <button type="submit" className="btn-app w-100">Registrarte</button>
+            <button
+              type="submit"
+              className="btn-app w-100"
+              disabled={isLoading}
+            >
+              {isLoading ? "Creando cuenta..." : "Registrarte"}
+            </button>
           </form>
         </div>
       </div>
