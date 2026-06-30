@@ -1,0 +1,15 @@
+@media (max-width: 767px) {
+  .footer-content, 
+  .footer-content div {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .footer-content {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
