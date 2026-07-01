@@ -15,7 +15,7 @@ export async function obtenerPosts(): Promise<Post[]> {
 }
 
 export async function obtenerPostPorId(id: string | number): Promise<Post> {
-    const respuesta = await fetch(`http://localhost:3001/api/posts/:${id}`);
+    const respuesta = await fetch(`http://localhost:3001/api/post/${id}`);
 
     if (!respuesta.ok) {
         throw new Error("No se pudo obtener el post");
@@ -27,7 +27,7 @@ export async function obtenerPostPorId(id: string | number): Promise<Post> {
 }
 
 export async function obtenerImagenesDePost(id: string | number): Promise<Post["imageUrls"]> {
-    const respuesta = await fetch(`http://localhost:3001/api/postimages/post/:${id}`);
+    const respuesta = await fetch(`http://localhost:3001/api/postimages/post/${id}`);
 
     if (!respuesta.ok) {
         throw new Error("No se pudieron obtener las imagenes");

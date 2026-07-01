@@ -2,7 +2,7 @@ import "../styles/pages/postDetail.css";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Spinner } from "react-bootstrap";
-import { obtenerImagenesDePost, obtenerPostPorId } from "../services/PostService";
+import { obtenerPostPorId } from "../services/PostService";
 import { obtenerUserPorId } from "../services/UsuarioService";
 import { obtenerComentarios } from "../services/CommentService";
 import type { Post } from "../data/Post";
@@ -13,7 +13,6 @@ function PostDetail() {
   const { id } = useParams();
   const [post, setPost] = useState<Post | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [imagenes, setImagenes] = useState<string[]>([]);
   const [comentarios, setComentarios] = useState<Comment[]>([]);
   const [cargando, setCargando] = useState(true);
 
@@ -27,14 +26,12 @@ function PostDetail() {
         const datosPost = await obtenerPostPorId(id!);
         setPost(datosPost);
 
-        const [datosUser, datosImagen, datosComment] = await Promise.all([
-          obtenerUserPorId(post?.userId!),
-          obtenerImagenesDePost(id!),
+        const [datosUser, datosComment] = await Promise.all([
+          obtenerUserPorId(datosPost?.userId!),
           obtenerComentarios(id!)
         ])
-        
+
         setUser(datosUser);
-        setImagenes(datosImagen);
         setComentarios(datosComment);
       } catch (error) {
         console.error("Error al cargar mensaje", error);
@@ -66,23 +63,33 @@ function PostDetail() {
             </div>
             <h1>{post?.description}</h1>
             <Card>
-            {post?.imageUrls && post.imageUrls.length > 0 && (
-              <Card.Img
-                variant="top"
-                src={post.imageUrls[0]}
-                alt="Imagen asociada al post"
-                onClick={() => setmostrarModal(true)}
-                style={{ maxHeight: '300px', objectFit: 'cover', cursor: 'pointer' }}
-              >
-              </Card.Img>
-            )}
+              {post?.imageUrls && post.imageUrls.length > 0 && (
+                <Card.Img
+                  variant="top"
+                  src={post.imageUrls[0]}
+                  alt="Imagen asociada al post"
+                  onClick={() => setmostrarModal(true)}
+                  style={{ maxHeight: '300px', objectFit: 'cover', cursor: 'pointer' }}
+                >
+                </Card.Img>
+              )}
             </Card>
           </div>
-
-          <hr className="my-4" />
+          <h3>Tags</h3>
+          <div className="mb-4">
+            {post?.tags && post.tags.length > 0 ? (
+              post.tags.map((tag: any, index: number) => (
+                <span key={index} className="badge bg-primary me-2">
+                  {tag.name || tag} 
+                </span>
+              ))
+            ) : (
+              <span className="text-muted">Sin tags</span>
+            )}
+          </div>
 
           <h3>Comentarios</h3>
-          <CommentList comments={comentarios} />
+          <CommentList postId={id} />
 
           <div className="mt-4">
             <CommentForm postId={id} />
