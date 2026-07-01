@@ -27,32 +27,29 @@ function Login() {
       return;
     }
 
-    if (password !== "123456") {
-      setError("Usuario o contraseña incorrecta");
-      return;
-    }
-
     setIsLoading(true);
 
     try {
-      const response = await fetch(API_URL);
-
-      if (!response.ok) {
-        throw new Error('Error en la respuesta del servidor. Ver detalle: ' + response.status);
-      }
+      // Usamos POST apuntando a la nueva ruta /login
+      const response = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ nickname, password }),
+      });
 
       const jsonResponse = await response.json();
-      const usersArray = jsonResponse.data;
-      
-      const usuario = usersArray.find((user: any) => user.nickname === nickname);
 
-      if (!usuario) {
-        setError("Usuario o contraseña incorrecta");
+      // Si el backend responde con error (401 credenciales incorrectas, etc.)
+      if (!response.ok) {
+        setError(jsonResponse.message || "Usuario o contraseña incorrecta");
         setIsLoading(false);
         return;
       }
 
-      login(usuario);
+      // Login exitoso: guardamos el usuario y navegamos al perfil
+      login(jsonResponse.data);
       navigate("/profile");
 
     } catch (err) {
