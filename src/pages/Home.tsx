@@ -11,8 +11,7 @@ function Home() {
 
       <p>Página de inicio</p>
 
-      <PostList />
-      
+
       <div className="d-flex gap-2">
         <Link to="/login" className="btn btn-primary">
           Login
@@ -22,6 +21,9 @@ function Home() {
           Registro
         </Link>
       </div>
+
+      <PostList />
+      
     </div>
     </Container>
   );
