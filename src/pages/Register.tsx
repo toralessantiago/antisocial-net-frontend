@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "../styles/pages/auth.css";
 
-const API_URL = "http://localhost:3001/api/users";
+const API_URL = "http://localhost:3000/api/users";
 
 function Register() {
   const navigate = useNavigate();
