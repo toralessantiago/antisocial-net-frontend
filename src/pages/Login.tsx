@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { FaAt, FaEye, FaEyeSlash } from "react-icons/fa";
 import "../styles/pages/auth.css";
-
-const API_URL = "http://localhost:3001/api/users"; 
+import API_URL from "../services/api"; 
 
 function Login() {
   const [nickname, setNickName] = useState("");
@@ -35,7 +34,7 @@ function Login() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(API_URL);
+      const response = await fetch(`${API_URL}/users`);
 
       if (!response.ok) {
         throw new Error('Error en la respuesta del servidor. Ver detalle: ' + response.status);

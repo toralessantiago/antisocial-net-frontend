@@ -18,13 +18,12 @@ export function PostList() {
             try {
                 const [postsObtenidos, usuariosObtenidos] = await Promise.all([
                     obtenerPosts(),
-                    obtenerUsuarios()
+                    obtenerUsuarios(),
                 ]);
 
                 setPosts(postsObtenidos);
                 setUsuarios(usuariosObtenidos);
-
-            } catch (error) {
+            } catch {
                 setError("Ocurrió un error al cargar los posts.");
             } finally {
                 setCargando(false);
@@ -57,15 +56,19 @@ export function PostList() {
 
             <Row className="justify-content-center">
                 {posts.map((post) => {
-                    const autorPost = usuarios.find(u => u.id === post.userId) || {
-                        id: post.userId,
-                        nickname: "Usuario desconocido"
-                    }
+                    const userId =
+                        typeof post.user === "object" ? post.user._id : post.user;
+                    const autorPost =
+                        usuarios.find((u) => u._id === userId) || {
+                            _id: userId,
+                            nickname: "Usuario desconocido",
+                            email: "",
+                        };
                     return (
-                        <Col key={post.id} xs={12} className="mb-4">
+                        <Col key={post._id} xs={12} className="mb-4">
                             <PostCard post={post} user={autorPost} />
                         </Col>
-                    )
+                    );
                 })}
             </Row>
         </Container>

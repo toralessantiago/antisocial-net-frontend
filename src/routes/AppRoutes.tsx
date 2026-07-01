@@ -30,9 +30,7 @@ function AppRoutes() {
       <Route
         path="/create-post"
         element={
-          <ProtectedRoute>
             <CreatePost />
-          </ProtectedRoute>
         }
       />
 
