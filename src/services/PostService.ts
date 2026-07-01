@@ -1,6 +1,6 @@
 import type { Post } from "../data/Post";
 
-const API_URL = "http://localhost:3001/posts";
+const API_URL = "http://localhost:3001/api/posts";
 
 export async function obtenerPosts(): Promise<Post[]> {
     const respuesta = await fetch(API_URL);
