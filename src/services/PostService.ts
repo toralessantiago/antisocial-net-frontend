@@ -1,6 +1,6 @@
 import type { Post } from "../data/Post";
 
-const API_URL = "http://localhost:3001/api/posts";
+const API_URL = "http://localhost:3000/api/posts";
 
 export async function obtenerPosts(): Promise<Post[]> {
     const respuesta = await fetch(API_URL);
@@ -15,7 +15,7 @@ export async function obtenerPosts(): Promise<Post[]> {
 }
 
 export async function obtenerPostPorId(id: string | number): Promise<Post> {
-    const respuesta = await fetch(`http://localhost:3001/api/post/${id}`);
+    const respuesta = await fetch(`http://localhost:3000/api/post/${id}`);
 
     if (!respuesta.ok) {
         throw new Error("No se pudo obtener el post");
