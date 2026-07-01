@@ -7,7 +7,7 @@ import { obtenerUsuarios } from "../services/UsuarioService";
 import type { Post } from "../data/Post";
 import type { User } from "../data/users";
 
-function PostList() {
+export function PostList() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [usuarios, setUsuarios] = useState<User[]>([]);
     const [cargando, setCargando] = useState(true);

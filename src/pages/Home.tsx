@@ -1,12 +1,18 @@
 import { Link } from "react-router-dom";
+import { Container } from "react-bootstrap";
+import { PostList } from "../components/PostList";
 import "../styles/pages/home.css";
+
 function Home() {
   return (
+    <Container>
     <div className="container mt-5">
       <h1>UnaHur Anti-Social Net</h1>
 
       <p>Página de inicio</p>
 
+      <PostList />
+      
       <div className="d-flex gap-2">
         <Link to="/login" className="btn btn-primary">
           Login
@@ -17,6 +23,7 @@ function Home() {
         </Link>
       </div>
     </div>
+    </Container>
   );
 }
 
