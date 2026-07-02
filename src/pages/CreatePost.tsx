@@ -71,7 +71,7 @@ function CreatePost() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           description: description.trim(),
-          user: user._id,
+          user: user.id,
           tags: selectedTags,
         }),
       });
