@@ -1,51 +1,41 @@
-import { API_URL } from "./api";
-
-const USERS_URL = `${API_URL}/users`;
+import api from "./api";
 
 export const getUser = async (id: string) => {
-  const response = await fetch(`${USERS_URL}/${id}`);
+  try {
+    const response = await api.get(`/users/${id}`);
+    const json = response.data;
 
-  const json = await response.json();
+    json.data = {
+      ...json.data,
+      _id: json.data._id ?? json.data.id,
+    };
 
-  console.log("Status:", response.status);
-  console.log("Respuesta:", json);
-
-  if (!response.ok) {
-    throw new Error(json.error || json.message);
+    return json;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.error ||
+        error.response?.data?.message ||
+        error.message,
+    );
   }
-
-  json.data = {
-    ...json.data,
-    _id: json.data._id ?? json.data.id,
-  };
-
-  return json;
 };
 
 export const updateUser = async (id: string, data: any) => {
-  console.log("Enviando:", data);
+  try {
+    const response = await api.put(`/users/${id}`, data);
+    const json = response.data;
 
-  const response = await fetch(`${USERS_URL}/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
+    json.data = {
+      ...json.data,
+      _id: json.data._id ?? json.data.id,
+    };
 
-  const json = await response.json();
-
-  console.log("Status:", response.status);
-  console.log("Respuesta:", json);
-
-  if (!response.ok) {
-    throw new Error(json.error || json.message);
+    return json;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.error ||
+        error.response?.data?.message ||
+        error.message,
+    );
   }
-
-  json.data = {
-    ...json.data,
-    _id: json.data._id ?? json.data.id,
-  };
-
-  return json;
 };

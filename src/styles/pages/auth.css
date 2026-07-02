@@ -9,11 +9,7 @@
   transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
-.register-layout *,
-.register-layout ::before,
-.register-layout ::after {
-  transition: background 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out !important;
-}
+
 
 @media (min-width: 900px) {
   .register-layout {

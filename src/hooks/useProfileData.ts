@@ -4,11 +4,11 @@ import {
   getPostsByUser,
   toggleLike,
   getLikesByUser,
-} from "../services/postService";
+} from "../services/PostsService";
 import {
   getCommentsByUser,
   getCommentsByPost,
-} from "../services/commentService";
+} from "../services/CommentsService";
 import type { Profile, Post, Comment } from "../types/profile";
 
 export function useProfileData(userId: string | undefined) {
