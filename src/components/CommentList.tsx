@@ -1,72 +1,36 @@
-import { useEffect, useState } from "react";
-import { Container, Row, Col, Spinner, Alert } from "react-bootstrap";
-
-import CommentCard from "./CommentCard";
-import { obtenerComentarios } from "../services/CommentService";
 import type { Comment } from "../data/comments";
 
-
-type CommentListProps = {
-    postId: string | number;
-};
-
-export function CommentList({ postId }: CommentListProps) {
-    const [comments, setComments] = useState<Comment[]>([]);
-    const [cargando, setCargando] = useState(true);
-    const [error, setError] = useState("");
-
-    useEffect(() => {
-        async function cargarComentarios() {
-            try {
-
-                const comentariosObtenidos = await obtenerComentarios(postId);
-                setComments(comentariosObtenidos);
-
-            } catch (error) {
-                setError("Ocurrió un error al cargar los comentarios.");
-            } finally {
-                setCargando(false);
-            }
-        }
-
-        cargarComentarios();
-    }, []);
-
-    if (cargando) {
-        return (
-            <Container className="text-center mt-5">
-                <Spinner animation="border" />
-                <p className="mt-3">Cargando comentarios...</p>
-            </Container>
-        );
-    }
-
-    if (error) {
-        return (
-            <Container className="mt-5">
-                <Alert variant="danger">{error}</Alert>
-            </Container>
-        );
-    }
-
-    return (
-        <Container className="my-5">
-
-            <Row className="justify-content-center">
-                {comments.map((comment) => {
-                    const autorComment = comment.user  || {
-                        _id: "desconocido",
-                        fullname: "",
-                        nickname: "Usuario desconocido",
-                        email: ""
-                    };;
-                    return (
-                        <Col key={comment._id} xs={12} className="mb-4">
-                            <CommentCard comment={comment} user={autorComment} />
-                        </Col>
-                    )
-                })}
-            </Row>
-        </Container>
-    );
+interface CommentListProps {
+  comments: Comment[];
 }
+
+function CommentList({ comments }: CommentListProps) {
+  if (comments.length === 0) {
+    return <p className="pd-no-comments">No hay comentarios aún</p>;
+  }
+
+  return (
+    <ul className="pd-comment-list">
+      {comments.map((c) => {
+        const autor = typeof c.user === "object" ? c.user : null;
+        return (
+          <li key={c._id} className="pd-comment-item">
+            <div className="pd-comment-header">
+              <div className="pd-comment-avatar">
+                {autor?.nickname
+                  ? autor.nickname.charAt(0).toUpperCase()
+                  : "?"}
+              </div>
+              <span className="pd-comment-author">
+                @{autor?.nickname ?? "Anónimo"}
+              </span>
+            </div>
+            <p className="pd-comment-content">{c.content}</p>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+export default CommentList;

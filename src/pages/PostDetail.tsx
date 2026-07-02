@@ -15,7 +15,8 @@ import type { User } from "../data/users";
 import type { Comment } from "../data/comments";
 
 import { UserContext } from "../context/UserContext";
-import API_URL from "../services/api";
+
+import { obtenerComentarios } from "../services/CommentService";
 
 function PostDetail() {
   const { id } = useParams();
@@ -44,12 +45,8 @@ function PostDetail() {
         const datosUser = await obtenerUserPorId(datosPost.user._id);
         setUser(datosUser);
 
-        const commentsRes = await fetch(`${API_URL}/comments/post/${id}`);
-
-        if (commentsRes.ok) {
-          const commentsData: Comment[] = await commentsRes.json();
-          setComentarios(commentsData);
-        }
+        const commentsData = await obtenerComentarios(id);
+        setComentarios(commentsData);
       } catch (err) {
         console.error(err);
         setError("No se pudo cargar la publicación");
@@ -85,9 +82,7 @@ function PostDetail() {
                 className="bg-secondary text-white rounded-circle d-flex justify-content-center align-items-center me-2"
                 style={{ width: "40px", height: "40px" }}
               >
-                {user?.nickname
-                  ? user.nickname.charAt(0).toUpperCase()
-                  : "?"}
+                {user?.nickname ? user.nickname.charAt(0).toUpperCase() : "?"}
               </div>
 
               <h5 className="mb-0 text-muted">
@@ -115,15 +110,11 @@ function PostDetail() {
           </div>
 
           <h3 className="mt-4">Tags</h3>
-
           <div className="mb-4">
-            {post.tags && post.tags.length > 0 ? (
-              post.tags.map((tag: any, index: number) => (
-                <span
-                  key={index}
-                  className="badge bg-primary me-2"
-                >
-                  {tag.name || tag}
+            {post.tags.length > 0 ? (
+              post.tags.map((tag) => (
+                <span key={tag._id} className="badge bg-primary me-2">
+                  {tag.name}
                 </span>
               ))
             ) : (
@@ -137,10 +128,7 @@ function PostDetail() {
 
           <div className="mt-4">
             {usuarioLogueado ? (
-              <CommentForm
-                postId={id!}
-                onCommentAdded={handleCommentAdded}
-              />
+              <CommentForm postId={id!} onCommentAdded={handleCommentAdded} />
             ) : (
               <p>Iniciá sesión para comentar.</p>
             )}
