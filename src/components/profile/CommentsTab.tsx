@@ -7,7 +7,7 @@ interface Props {
 export default function CommentsTab({ comments }: Props) {
   return (
     <>
-      <h4 className="mb-3">Tus comentarios</h4>
+      <h4 className="tab-section-title mb-3">Mis comentarios</h4>
 
       {comments.length === 0 ? (
         <div className="card shadow-sm">

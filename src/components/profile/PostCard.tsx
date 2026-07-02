@@ -26,7 +26,7 @@ export default function PostCard({
     <div className="card shadow-sm mb-3">
       <div className="card-body">
         <div className="d-flex justify-content-between align-items-center">
-          <strong>@{nickname}</strong>
+          <strong className="nickname-text">@{nickname}</strong>
           <small className="post-date">
             {new Date(post.createdAt).toLocaleDateString("es-AR")}
           </small>
@@ -55,11 +55,15 @@ export default function PostCard({
               style={{ cursor: "pointer", color: liked ? "red" : "inherit" }}
               onClick={() => onLike(post._id)}
             >
-              <LuHeart className="me-1" />
+              <LuHeart
+                className="me-1"
+                style={liked ? { fill: "red" } : undefined}
+              />
               {post.likes?.length || 0}
             </small>
             <small
               role="button"
+              className="comment-icon"
               style={{ cursor: "pointer" }}
               onClick={() => onToggleComments(post._id)}
             >
@@ -78,7 +82,9 @@ export default function PostCard({
             ) : (
               comments.map((comment) => (
                 <div key={comment._id} className="mb-2">
-                  <strong className="small">@{comment.user?.nickname}</strong>
+                  <strong className="small nickname-text">
+                    @{comment.user?.nickname}
+                  </strong>
                   <p className="small mb-0">{comment.content}</p>
                 </div>
               ))

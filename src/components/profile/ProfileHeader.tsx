@@ -7,6 +7,7 @@ import {
   LuHeart,
 } from "react-icons/lu";
 import type { Profile, Post } from "../../types/profile";
+import { toSentenceCase } from "../../utils/textFormat";
 
 interface Props {
   profile: Profile;
@@ -61,7 +62,7 @@ export default function ProfileHeader({
         </div>
 
         <div className="profile-user-info">
-          <h2 className="profile-name">{profile.fullname}</h2>
+          <h2 className="profile-name">{toSentenceCase(profile.fullname)}</h2>
           <p className="profile-handle">@{profile.nickname}</p>
 
           {profile.bio && <p className="profile-bio">{profile.bio}</p>}

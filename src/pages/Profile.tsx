@@ -18,6 +18,10 @@ import LikesTab from "../components/profile/LikesTab";
 import EditProfileModal from "../components/profile/EditProfileModal";
 import AvatarModal from "../components/profile/AvatarModal";
 
+import { useToast } from "../hooks/useToast";
+import Toast from "../components/Toast";
+import "../styles/components/toast.css";
+
 type Tab = "posts" | "comments" | "likes";
 
 function Profile() {
@@ -34,6 +38,8 @@ function Profile() {
 
   const { user, logout } = useContext(UserContext);
   const navigate = useNavigate();
+
+  const { toast, showToast, hideToast } = useToast();
 
   const userId = user?._id ?? user?.id;
 
@@ -66,10 +72,9 @@ function Profile() {
         location: editProfile.location ?? "",
       });
       setShowModal(false);
-      alert("Perfil actualizado correctamente");
-    } catch (error) {
-      console.error(error);
-      alert("No se pudo actualizar el perfil");
+      showToast("Perfil actualizado correctamente", "success");
+    } catch (error: any) {
+      showToast(error.message || "No se pudo actualizar el perfil", "error");
     }
   };
 
@@ -152,6 +157,9 @@ function Profile() {
           }}
           onClose={() => setShowAvatarModal(false)}
         />
+      )}
+      {toast && (
+        <Toast message={toast.message} type={toast.type} onClose={hideToast} />
       )}
     </div>
   );
