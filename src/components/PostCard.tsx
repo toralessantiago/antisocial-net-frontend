@@ -20,7 +20,7 @@ function PostCard({ post, user }: CardProps) {
     useEffect(() => {
         async function fetchCantidad() {
             try {
-                const comentarios = await obtenerComentarios(post.id);
+                const comentarios = await obtenerComentarios(post._id);
                 setCantidad(comentarios.length);
 
             } catch (error) {
@@ -28,17 +28,17 @@ function PostCard({ post, user }: CardProps) {
             }
         }
         fetchCantidad();
-    }, [post.id]);
+    }, [post._id]);
 
     return (
         <Card style={{ width: '18rem' }}>
             <Card.Body>
                 <Card.Title>{user.nickname}</Card.Title>
                 <div>
-                    {post.imageUrls && post.imageUrls.length > 0 && (
+                    {post.images && post.images.length > 0 && (
                         <Card.Img
                             variant="top"
-                            src={post.imageUrls[0]}
+                            src={post.images[0].url}
                             alt="Imagen asociada al post"
                             onClick={() => setmostrarModal(true)}
                             style={{ maxHeight: '300px', objectFit: 'cover', cursor: 'pointer' }}
@@ -53,7 +53,7 @@ function PostCard({ post, user }: CardProps) {
                     {post.tags && post.tags.length > 0 ? (
                         post.tags.map((tag, index) => (
                             <Badge bg="secondary" className="me-1" key={index}>
-                                {tag}
+                                {tag.name}
                             </Badge>
                         ))
                     ) : null}
@@ -63,7 +63,7 @@ function PostCard({ post, user }: CardProps) {
                 </div>
             </Card.Body>
             <Card.Body>
-                <Link to={`/post/${post.id}`} className="btn btn-primary">
+                <Link to={`/post/${post._id}`} className="btn btn-primary">
                     Ver más
                 </Link>
             </Card.Body>
@@ -76,11 +76,13 @@ function PostCard({ post, user }: CardProps) {
                 <Modal.Header closeButton>
                 </Modal.Header>
                 <Modal.Body className="text-center p-0">
-                    <img
-                        src={post.imageUrls[0]}
-                        alt="Imagen expandida"
-                        style={{ width: '100%', height: 'auto' }}>
-                    </img>
+                    {post.images && post.images.length > 0 && (
+                        <img
+                            src={post.images[0].url}
+                            alt="Imagen expandida"
+                            style={{ width: '100%', height: 'auto' }}>
+                        </img>
+                    )}
                 </Modal.Body>
             </Modal>
         </Card>

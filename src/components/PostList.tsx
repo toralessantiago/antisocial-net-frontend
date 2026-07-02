@@ -57,12 +57,15 @@ export function PostList() {
 
             <Row className="justify-content-center">
                 {posts.map((post) => {
-                    const autorPost = usuarios.find(u => u.id === post.userId) || {
-                        id: post.userId,
-                        nickname: "Usuario desconocido"
+                    const userId = post.user?._id;
+                    const autorPost = usuarios.find(u => String(u._id) === String(userId)) || {
+                        _id: userId ?? "desconocido",
+                        fullname: "",
+                        nickname: "Usuario desconocido",
+                        email: ""
                     }
                     return (
-                        <Col key={post.id} xs={12} className="mb-4">
+                        <Col key={post._id} xs={12} className="mb-4">
                             <PostCard post={post} user={autorPost} />
                         </Col>
                     )

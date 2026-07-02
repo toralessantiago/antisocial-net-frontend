@@ -1,6 +1,13 @@
 export type Comment = {
-  id: number;
+  _id: string;
   content: string;
-  postId: number;
-  userId: number;
+  postId: string;
+  user: {
+    _id: string;
+    nickname: string;
+    fullname: string;
+    email: string;
+  };
+  visible: boolean;
+  createdAt: string;
 }
