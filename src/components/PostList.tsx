@@ -55,32 +55,34 @@ export function PostList() {
   }
 
   return (
-    <Container className="my-5">
-      <h1 className="mb-4">Home</h1>
+    <Container fluid className="py-4">
+  <Row className="justify-content-center">
+    <Col xs={12} md={8} lg={6} xl={5}>
+      <h2 className="text-center mb-4">Inicio</h2>
 
-      <Row className="justify-content-center">
-        {posts.map((post) => {
-          const userId =
-            typeof post.user === "object" ? post.user._id : post.user;
-            
-          // === FIX DE TYPESCRIPT AGREGADO AQUÍ ===
-          const autorPost = usuarios.find((u) => u._id === userId || u.id === userId) ?? {
+      {posts.map((post) => {
+        const userId =
+          typeof post.user === "object" ? post.user._id : post.user;
+
+        const autorPost =
+          usuarios.find((u) => u._id === userId || u.id === userId) ??
+          ({
             _id: userId,
             id: userId,
             fullname: "",
             nickname: "Usuario desconocido",
             email: "",
             birthDate: "",
-          } as User;
-          // =======================================
+          } as User);
 
-          return (
-            <Col key={post._id} xs={12} className="mb-4">
-              <PostCard post={post} user={autorPost} />
-            </Col>
-          );
-        })}
-      </Row>
-    </Container>
+        return (
+          <div key={post._id} className="mb-4">
+            <PostCard post={post} user={autorPost} />
+          </div>
+        );
+      })}
+    </Col>
+  </Row>
+</Container>
   );
 }

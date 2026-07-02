@@ -1,119 +1,84 @@
-/* ================= POST DETAIL - MISMOS ESTILOS QUE AUTH ================= */
+/* ================= POST DETAIL ================= */
+
 .pd-layout {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  justify-content: center;
   min-height: 100vh;
-  background: var(--bg) !important;
+  background: var(--bg);
   color: var(--text);
   transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
-@media (min-width: 900px) {
-  .pd-layout {
-    grid-template-columns: 1fr 1.2fr;
-  }
-}
-
-.pd-left {
-  display: none;
-  background: var(--bg);
-  color: var(--text);
-  padding: 60px;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  text-align: center;
-  border-right: 1px solid var(--border);
-}
-
-@media (min-width: 900px) {
-  .pd-left {
-    display: flex;
-  }
-}
-
-.pd-left h1 {
-  font-size: 32px;
-  font-weight: 600;
-  margin-bottom: 12px;
-}
-
-.pd-left p {
-  font-size: 16px;
-  opacity: 0.7;
-}
-
 .pd-right-container {
+  width: 100%;
   display: flex;
   justify-content: center;
   padding: 40px 20px;
-  width: 100%;
 }
 
 .pd-right {
   width: 100%;
-  max-width: 520px;
+  max-width: 600px;
   padding: 32px;
   border-radius: 24px;
-  background: rgba(255, 255, 255, 0.65) !important;
+  background: rgba(255, 255, 255, 0.65);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border) !important;
+  border: 1px solid var(--border);
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
 }
 
 [data-bs-theme="dark"] .pd-right {
-  background: rgba(15, 15, 15, 0.65) !important;
+  background: rgba(15, 15, 15, 0.65);
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
 }
 
-/* Header */
+/* ================= HEADER ================= */
+
 .pd-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 12px;
   margin-bottom: 20px;
 }
 
-[data-theme='dark'] .lu-heart {
-  stroke-width: 2px;
-}
 .pd-avatar {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: var(--accent);
-  color: #fff;
+  color: white;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 17px;
   flex-shrink: 0;
 }
 
 .pd-author {
-  font-weight: 600;
   font-size: 15px;
+  font-weight: 600;
   color: var(--text);
-  display: block;
 }
 
 .pd-date {
   font-size: 12px;
   color: var(--text);
-  opacity: 0.6;
+  opacity: .6;
 }
 
-/* Description */
+/* ================= DESCRIPCIÓN ================= */
+
 .pd-description {
+  margin: 20px 0;
   font-size: 16px;
   line-height: 1.6;
   color: var(--text);
-  margin-bottom: 20px;
 }
 
-/* Images */
+/* ================= IMÁGENES ================= */
+
 .pd-images {
   display: flex;
   flex-direction: column;
@@ -123,44 +88,30 @@
 
 .pd-image {
   width: 100%;
-  border-radius: 12px;
+  border-radius: 14px;
   object-fit: cover;
-  max-height: 400px;
+  max-height: 500px;
+  display: block;
 }
 
-/* Tags */
-.pd-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 20px;
-}
+/* ================= DIVISOR ================= */
 
-.pd-tag {
-  padding: 4px 12px;
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
-  color: var(--accent);
-  border-radius: 16px;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-/* Divider */
 .pd-divider {
   border: none;
   border-top: 1px solid var(--border);
-  margin: 20px 0;
+  margin: 24px 0;
 }
 
-/* Section title */
+/* ================= TÍTULOS ================= */
+
 .pd-section-title {
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 16px;
-  color: var(--text);
 }
 
-/* Comment list */
+/* ================= COMENTARIOS ================= */
+
 .pd-comment-list {
   list-style: none;
   padding: 0;
@@ -184,42 +135,36 @@
 }
 
 .pd-comment-avatar {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background: color-mix(in srgb, var(--text) 15%, transparent);
   color: var(--text);
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   font-weight: 600;
   font-size: 12px;
-  flex-shrink: 0;
 }
 
 .pd-comment-author {
-  font-weight: 600;
   font-size: 13px;
-  color: var(--text);
+  font-weight: 600;
 }
 
 .pd-comment-content {
+  padding-left: 38px;
   font-size: 14px;
-  color: var(--text);
   line-height: 1.5;
-  margin: 0;
-  padding-left: 36px;
 }
 
 .pd-no-comments {
-  font-size: 14px;
-  color: var(--text);
-  opacity: 0.5;
+  opacity: .6;
   font-style: italic;
-  margin-bottom: 20px;
 }
 
-/* Comment form */
+/* ================= FORMULARIO ================= */
+
 .pd-comment-form {
   display: flex;
   flex-direction: column;
@@ -227,36 +172,30 @@
 }
 
 .pd-comment-input {
-  height: auto !important;
-  min-height: 80px;
+  min-height: 90px;
   resize: vertical;
 }
 
 .pd-comment-btn {
   align-self: flex-end;
-  width: auto !important;
-  padding: 0 24px !important;
 }
 
 .pd-comment-error {
-  font-size: 13px;
   color: #dc3545;
-  margin: 0;
+  font-size: 13px;
 }
 
 .pd-login-hint {
-  font-size: 14px;
-  color: var(--text);
-  opacity: 0.5;
+  opacity: .6;
   font-style: italic;
 }
 
-/* Loading / Error */
+/* ================= LOADING ================= */
+
 .pd-loading,
 .pd-error {
   text-align: center;
   padding: 60px 20px;
-  font-size: 16px;
 }
 
 .pd-error {
