@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
+import { UserContext } from "../context/UserContext";
 
 type CommentFormProps = {
     postId: string | undefined;
@@ -10,9 +11,16 @@ export default function CommentForm({ postId }: CommentFormProps) {
     const [error, setError] = useState("");
     const [enviando, setEnviando] = useState(false);
 
+    const { user } = useContext(UserContext)
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!contenido.trim() || !postId) return;
+
+        if (!user?.id) {
+            setError("Tenés que iniciar sesión para continuar");
+            return;
+        }
 
         try {
             setEnviando(true);
@@ -26,7 +34,7 @@ export default function CommentForm({ postId }: CommentFormProps) {
                 body: JSON.stringify({
                     content: contenido,
                     postId: Number(postId),
-                    userId: 1 // Aca iria id de usuario loggeado
+                    userId: user._id
                 }),
             });
 

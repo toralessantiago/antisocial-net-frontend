@@ -25,7 +25,8 @@ export async function obtenerUserPorId(id: string): Promise<User> {
         throw new Error("No se pudo obtener el user");
     }
 
-    const user: User = await respuesta.json();
+    const respuestaJson = await respuesta.json();
+    const user: User = respuestaJson.data || respuestaJson;
 
     return user;
 }

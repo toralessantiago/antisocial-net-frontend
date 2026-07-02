@@ -6,7 +6,7 @@ import { Container, Row, Col, Card, Spinner } from "react-bootstrap";
 
 import { obtenerPostPorId } from "../services/PostService";
 import { obtenerUserPorId } from "../services/UsuarioService";
-// import { obtenerComentarios } from "../services/CommentService";
+
 
 import { CommentList } from "../components/CommentList";
 import CommentForm from "../components/CommentForm";
@@ -31,8 +31,9 @@ function PostDetail() {
         const datosPost = await obtenerPostPorId(id!);
         setPost(datosPost);
 
-        const datosUser = await obtenerUserPorId(datosPost?.user._id!);
+        const datosUser = await obtenerUserPorId(datosPost?.user._id);
         setUser(datosUser);
+
 
       } catch (error) {
         console.error("Error al cargar mensaje", error);
@@ -59,7 +60,7 @@ function PostDetail() {
                 {user?.nickname ? user.nickname.charAt(0).toUpperCase() : "?"}
               </div>
               <h5 className="mb-0 text-muted">
-                @{user ? user.nickname : "Usuario desconocido"}
+                @{user?.fullname || "Usuario desconocido"}
               </h5>
             </div>
             <h1>{post?.description}</h1>
@@ -81,7 +82,7 @@ function PostDetail() {
             {post?.tags && post.tags.length > 0 ? (
               post.tags.map((tag: any, index: number) => (
                 <span key={index} className="badge bg-primary me-2">
-                  {tag.name || tag} 
+                  {tag.name || tag}
                 </span>
               ))
             ) : (
