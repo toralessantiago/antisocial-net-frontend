@@ -27,4 +27,8 @@ export type Post = {
 
   imageUrls?: string[];
   userId?: string;
+  
+  // Agregamos estas dos propiedades opcionales para que no de error
+  likes?: any[];
+  comments?: any[];
 };

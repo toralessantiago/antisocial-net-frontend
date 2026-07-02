@@ -11,3 +11,13 @@ export async function obtenerComentarios(id: string): Promise<Comment[]> {
 
   return await respuesta.json();
 }
+
+export async function obtenerComentariosPorUsuario(userId: string): Promise<Comment[]> {
+  const response = await fetch(`${API_URL}/comments/user/${userId}`);
+
+  if (!response.ok) {
+    throw new Error("Error al traer comentarios del usuario");
+  }
+
+  return await response.json();
+}

@@ -10,4 +10,5 @@ export type Comment = {
   };
   visible: boolean;
   createdAt: string;
+  post: string | { _id: string };
 };
