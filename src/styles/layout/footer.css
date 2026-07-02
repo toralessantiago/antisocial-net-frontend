@@ -1,0 +1,54 @@
+.footer-container {
+  background-color: var(--nav-bg);
+  border-top: 1px solid var(--nav-border);
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  margin-top: auto;
+}
+
+.footer-links-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.footer-links-row a {
+  color: var(--nav-link);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.footer-links-row a:hover {
+  color: var(--nav-hover);
+}
+
+.footer-dot {
+  color: var(--nav-link);
+  opacity: 0.6;
+}
+
+.footer-copy {
+  color: var(--nav-link);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .footer-links-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .footer-dot {
+    display: none; 
+  }
+}

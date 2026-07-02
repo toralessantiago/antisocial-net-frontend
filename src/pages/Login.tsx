@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { FaAt, FaEye, FaEyeSlash } from "react-icons/fa";
 import "../styles/pages/auth.css";
@@ -7,15 +7,21 @@ import "../styles/pages/auth.css";
 const API_URL = "http://localhost:3000/api/users";
 
 function Login() {
+  const { user, login } = useContext(UserContext);
+  const navigate = useNavigate();
+
+  // Estados del formulario
   const [nickname, setNickName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [isLoading, setIsLoading] = useState(false);
-
-  const { login } = useContext(UserContext);
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+
+  // 1. Redirección automática si el usuario ya inició sesión
+  if (user) {
+    return <Navigate to="/feed" />;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +36,7 @@ function Login() {
     setIsLoading(true);
 
     try {
-      // Usamos POST apuntando a la nueva ruta /login
+      // 2. Petición al endpoint /login del backend
       const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: {
@@ -41,16 +47,15 @@ function Login() {
 
       const jsonResponse = await response.json();
 
-      // Si el backend responde con error (401 credenciales incorrectas, etc.)
       if (!response.ok) {
         setError(jsonResponse.message || "Usuario o contraseña incorrecta");
         setIsLoading(false);
         return;
       }
 
-      // Login exitoso: guardamos el usuario y navegamos al perfil
+      // 3. Login exitoso: guardamos el usuario y navegamos al feed
       login(jsonResponse.data);
-      navigate("/profile");
+      navigate("/feed");
     } catch (err) {
       console.error("Error inesperado:", err);
       setError("No se pudo conectar con el servidor. Intenta más tarde.");
@@ -123,12 +128,14 @@ function Login() {
             </div>
 
             {error && (
-              <small className="text-danger text-center">{error}</small>
+              <small className="text-danger text-center d-block mt-2">
+                {error}
+              </small>
             )}
 
             <button
               type="submit"
-              className="btn-app w-100"
+              className="btn-app w-100 mt-3"
               disabled={isLoading}
             >
               {isLoading ? "Ingresando..." : "Ingresar"}

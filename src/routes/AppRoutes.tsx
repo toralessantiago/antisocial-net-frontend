@@ -6,17 +6,31 @@ import Register from "../pages/Register";
 import Profile from "../pages/Profile";
 import PostDetail from "../pages/PostDetail";
 import CreatePost from "../pages/CreatePost";
+import Feed from "../pages/Feed"; 
 import ProtectedRoute from "../components/ProtectedRoute";
 
 function AppRoutes() {
   return (
     <Routes>
+<<<<<<< HEAD
+=======
+      {/* --- Rutas Públicas --- */}
+>>>>>>> santi
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-
       <Route path="/post/:id" element={<PostDetail />} />
 
+      {/* --- Rutas Protegidas --- */}
+      <Route
+        path="/feed"
+        element={
+          <ProtectedRoute>
+            <Feed />
+          </ProtectedRoute>
+        }
+      />
+      
       <Route
         path="/profile"
         element={
@@ -26,6 +40,7 @@ function AppRoutes() {
         }
       />
 
+      {/* Corrección: Ahora crear un post requiere estar logueado */}
       <Route
         path="/create-post"
         element={

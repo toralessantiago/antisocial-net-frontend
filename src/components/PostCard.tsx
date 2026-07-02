@@ -7,20 +7,20 @@ import type { User } from "../data/users";
 import { obtenerComentarios } from "../services/CommentService";
 
 type CardProps = {
-    post: Post,
-    user: User
+    post: Post;
+    user: User;
 };
-
 
 function PostCard({ post, user }: CardProps) {
 
-    const [mostrarModal, setmostrarModal] = useState(false);
+    const [mostrarModal, setMostrarModal] = useState(false);
+
     const [cantidadComentarios, setCantidad] = useState(0);
 
     useEffect(() => {
         async function fetchCantidad() {
             try {
-                const comentarios = await obtenerComentarios(post.id);
+                const comentarios = await obtenerComentarios(post._id);
                 setCantidad(comentarios.length);
 
             } catch (error) {
@@ -28,19 +28,19 @@ function PostCard({ post, user }: CardProps) {
             }
         }
         fetchCantidad();
-    }, [post.id]);
+    }, [post._id]);
 
     return (
-        <Card style={{ width: '18rem' }}>
+        <Card>
             <Card.Body>
                 <Card.Title>{user.nickname}</Card.Title>
                 <div>
-                    {post.imageUrls && post.imageUrls.length > 0 && (
+                    {post.images && post.images.length > 0 && (
                         <Card.Img
                             variant="top"
-                            src={post.imageUrls[0]}
+                            src={post.images[0].url}
                             alt="Imagen asociada al post"
-                            onClick={() => setmostrarModal(true)}
+                            onClick={() => setMostrarModal(true)}
                             style={{ maxHeight: '300px', objectFit: 'cover', cursor: 'pointer' }}
                         >
                         </Card.Img>
@@ -53,7 +53,7 @@ function PostCard({ post, user }: CardProps) {
                     {post.tags && post.tags.length > 0 ? (
                         post.tags.map((tag, index) => (
                             <Badge bg="secondary" className="me-1" key={index}>
-                                {tag}
+                               {typeof tag === "object" ? tag.name : tag}
                             </Badge>
                         ))
                     ) : null}
@@ -63,24 +63,26 @@ function PostCard({ post, user }: CardProps) {
                 </div>
             </Card.Body>
             <Card.Body>
-                <Link to={`/post/${post.id}`} className="btn btn-primary">
+                <Link to={`/post/${post._id}`} className="btn btn-primary">
                     Ver más
                 </Link>
             </Card.Body>
 
             <Modal
                 show={mostrarModal}
-                onHide={() => setmostrarModal(false)}
+                onHide={() => setMostrarModal(false)}
                 centered
-                size="lg">
-                <Modal.Header closeButton>
-                </Modal.Header>
+                size="lg"
+            >
+                <Modal.Header closeButton />
                 <Modal.Body className="text-center p-0">
-                    <img
-                        src={post.imageUrls[0]}
-                        alt="Imagen expandida"
-                        style={{ width: '100%', height: 'auto' }}>
-                    </img>
+                    {post.images && post.images.length > 0 && (
+                        <img
+                            src={post.images[0].url}
+                            alt="Imagen expandida"
+                            style={{ width: '100%', height: 'auto' }}>
+                        </img>
+                    )}
                 </Modal.Body>
             </Modal>
         </Card>
