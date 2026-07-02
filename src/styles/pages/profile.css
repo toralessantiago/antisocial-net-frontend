@@ -252,10 +252,13 @@
     align-items: center;
   }
 
-  .profile-user-info {
-    margin-top: 10px;
-    text-align: center;
-  }
+.profile-user-info{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    text-align:left;
+    width:100%;
+}
 
   .profile-avatar {
     width: 110px;
@@ -503,4 +506,26 @@
 
 .avatar-option.selected {
   border-color: var(--accent);
+}
+
+.profile-stat-link{
+    background:none;
+    border:none;
+    padding:0;
+    margin:0;
+    color:inherit;
+    font:inherit;
+    cursor:pointer;
+    text-decoration:none;
+}
+
+.profile-stat-link:hover{
+    color:var(--accent);
+}
+
+.profile-follow-stats{
+    display:flex;
+    gap:1.5rem;
+    margin:.8rem 0;
+    justify-content:flex-start;
 }

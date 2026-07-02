@@ -30,3 +30,20 @@ export async function obtenerUserPorId(id: string): Promise<User> {
 
     return user;
 }
+
+export async function updateUser(id: string, data: Partial<User>): Promise<{ data: User }> {
+    const respuesta = await fetch(`${API_URL}/users/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+    });
+
+    if (!respuesta.ok) {
+        throw new Error("No se pudo actualizar el usuario");
+    }
+
+    const respuestaJson = await respuesta.json();
+    const user: User = respuestaJson.data || respuestaJson;
+
+    return { data: user };
+}

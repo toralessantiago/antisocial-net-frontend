@@ -1,9 +1,18 @@
-export type User = {
-  _id: string;
+export interface User {
+  id: string;
+  _id?: string;
+
   fullname: string;
   nickname: string;
   email: string;
-  birthDate?: string;
-}
+  birthDate: string;
 
-export const users: User[] = [];
+  bio?: string;
+  location?: string;
+  verified?: boolean;
+
+  followers?: string[];
+  following?: string[];
+
+  createdAt?: string;
+}
