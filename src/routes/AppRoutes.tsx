@@ -20,9 +20,9 @@ function AppRoutes() {
       <Route
         path="/profile"
         element={
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
+          //         <ProtectedRoute>
+          <Profile />
+          //         </ProtectedRoute>
         }
       />
 

@@ -36,10 +36,7 @@
 
 .profile-body {
   position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 0 30px 30px;
+  padding: 0 20px 20px;
 }
 
 .profile-user {
@@ -53,21 +50,19 @@
    AVATAR
 ====================================================== */
 
+.profile-avatar-wrapper {
+  position: relative;
+  width: fit-content;
+  margin-top: -65px;
+}
+
 .profile-avatar {
   width: 130px;
   height: 130px;
-
-  margin-top: -65px;
-
   border-radius: 50%;
   border: 5px solid var(--bg);
-
   object-fit: cover;
-
-  box-shadow:
-    0 0 0 2px rgba(255, 255, 255, 0.04),
-    0 10px 25px rgba(0, 0, 0, 0.35);
-
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   transition: all 0.25s ease;
 }
 
@@ -77,36 +72,105 @@
   cursor: pointer;
 }
 
+.profile-avatar-edit {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+
+  width: 34px;
+  height: 34px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: var(--accent);
+  color: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+
+  opacity: 0;
+  transition: 0.2s;
+}
+
+.profile-avatar-wrapper:hover .profile-avatar-edit {
+  opacity: 1;
+}
+
 /* ======================================================
    INFORMACIÓN DEL USUARIO
 ====================================================== */
 
 .profile-user-info {
-  margin-top: 18px;
+  margin-top: 12px;
 }
 
 .profile-name {
   margin: 0;
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.2;
 }
 
-.profile-stats {
-  margin: 6px 0;
+.profile-handle {
+  margin: 2px 0 10px;
   color: var(--muted);
+  font-size: 0.95rem;
 }
 
 .profile-bio {
-  margin-top: 10px;
+  margin: 0 0 10px;
   color: var(--text);
-  opacity: 0.75;
+  font-size: 0.95rem;
+  line-height: 1.4;
 }
 
-.profile-date,
-.profile-location {
+.profile-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
   color: var(--muted);
   font-size: 0.9rem;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+.profile-meta .meta-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.profile-meta svg {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.profile-follow-stats {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.profile-follow-stats strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.profile-extra-stats {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.profile-extra-stats svg {
+  color: var(--accent);
 }
 
 /* ======================================================
@@ -114,10 +178,11 @@
 ====================================================== */
 
 .profile-actions {
+  position: absolute;
+  top: 16px;
+  right: 20px;
   display: flex;
   gap: 10px;
-  margin-top: 25px;
-  flex-shrink: 0;
 }
 
 .profile-actions .btn-outline-secondary {
@@ -135,13 +200,24 @@
 ====================================================== */
 
 .profile-tabs {
+  display: flex;
+  flex-wrap: nowrap;
   border-bottom: 1px solid var(--border);
 }
 
+.profile-tabs .nav-item {
+  flex: 1;
+  list-style: none;
+}
+
 .profile-tabs .nav-link {
-  color: var(--muted);
-  border: none;
-  transition: 0.2s ease;
+  width: 100%;
+  text-align: center;
+  padding: 12px 4px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .profile-tabs .nav-link:hover {
@@ -163,6 +239,17 @@
   color: var(--muted);
 }
 
+.post-actions small {
+  display: flex;
+  align-items: center;
+  color: var(--muted);
+}
+
+.post-actions svg,
+.post-date svg {
+  color: var(--accent);
+}
+
 /* Efecto sobre las cards */
 
 .profile-page .card {
@@ -172,17 +259,6 @@
 .profile-page .card:hover {
   transform: translateY(-2px);
   border-color: var(--accent);
-}
-
-/* ======================================================
-   ICONOS
-====================================================== */
-
-.profile-date svg,
-.profile-location svg,
-.profile-stats svg,
-.post-date svg {
-  color: var(--accent);
 }
 
 /* ======================================================
@@ -241,41 +317,34 @@
     height: 180px;
   }
 
-  .profile-body {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .profile-user {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .profile-user-info {
-    margin-top: 10px;
-    text-align: center;
-  }
-
   .profile-avatar {
-    width: 110px;
-    height: 110px;
-    margin-top: -55px;
+    width: 100px;
+    height: 100px;
+  }
+
+  .profile-avatar-wrapper {
+    margin-top: -50px;
   }
 
   .profile-name {
-    font-size: 1.6rem;
+    font-size: 1.15rem;
+  }
+
+  .profile-meta {
+    flex-direction: column;
+    gap: 4px;
   }
 
   .profile-actions {
+    position: static;
+    margin-top: 16px;
     width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 20px;
   }
 
-  .profile-actions button {
-    min-width: 150px;
+  .profile-actions .btn {
+    flex: 1;
+    padding: 6px 10px;
+    font-size: 0.85rem;
   }
 }
 
@@ -284,7 +353,6 @@
 ====================================================== */
 
 [data-bs-theme="dark"] .profile-page {
-  /* Fondo con un degradado sutil */
   background:
     radial-gradient(
       circle at top center,
@@ -297,17 +365,11 @@
   border-radius: 22px;
 }
 
-/* Card del perfil */
-
 [data-bs-theme="dark"] .profile-header {
   background: #1a1e23;
-
   border: 1px solid #2d3238;
-
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
-
-/* Banner más luminoso */
 
 [data-bs-theme="dark"] .profile-banner {
   background:
@@ -316,41 +378,28 @@
     linear-gradient(135deg, #214b39, #182228);
 }
 
-/* Avatar */
-
 [data-bs-theme="dark"] .profile-avatar {
   box-shadow:
     0 0 0 2px rgba(255, 255, 255, 0.04),
-    0 12px 30px rgba(0, 0, 0, 0.45);
+    0 8px 20px rgba(0, 0, 0, 0.3);
 }
-
-/* Publicaciones */
 
 [data-bs-theme="dark"] .profile-page .card {
   background: #1d2126;
-
   border: 1px solid #30363d;
-
   box-shadow: none;
-
   transition: all 0.25s ease;
 }
 
 [data-bs-theme="dark"] .profile-page .card:hover {
   transform: translateY(-2px);
-
   border-color: var(--accent);
-
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
-
-/* Bio */
 
 [data-bs-theme="dark"] .profile-bio {
   color: rgba(255, 255, 255, 0.82);
 }
-
-/* Tabs */
 
 [data-bs-theme="dark"] .profile-tabs {
   border-color: #30363d;
@@ -368,8 +417,6 @@
   color: var(--accent);
 }
 
-/* Botón Editar */
-
 [data-bs-theme="dark"] .profile-actions .btn-outline-secondary {
   border-color: #444b53;
   color: #d5d9dd;
@@ -379,66 +426,6 @@
   background: var(--accent);
   border-color: var(--accent);
   color: white;
-}
-
-.profile-avatar-wrapper {
-  position: relative;
-  width: fit-content;
-}
-
-.profile-avatar-edit {
-  position: absolute;
-  right: 6px;
-  bottom: 6px;
-
-  width: 34px;
-  height: 34px;
-
-  border: none;
-  border-radius: 50%;
-
-  background: var(--accent);
-  color: white;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  cursor: pointer;
-
-  opacity: 0;
-  transition: 0.2s;
-}
-
-.profile-avatar-wrapper:hover .profile-avatar-edit {
-  opacity: 1;
-}
-
-.profile-status {
-  color: var(--muted);
-  font-size: 0.95rem;
-  margin-bottom: 8px;
-}
-
-.profile-extra-stats {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 12px;
-  color: var(--muted);
-}
-
-.profile-extra-stats svg {
-  color: var(--accent);
-}
-
-.post-actions small {
-  display: flex;
-  align-items: center;
-  color: var(--muted);
-}
-
-.post-actions svg {
-  color: var(--accent);
 }
 
 /* ======================================================
@@ -482,7 +469,10 @@
   filter: invert(1);
 }
 
-/*-----------------*/
+/* ======================================================
+   SELECTOR DE AVATAR
+====================================================== */
+
 .avatar-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
