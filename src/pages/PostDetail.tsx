@@ -32,7 +32,7 @@ function PostDetail() {
         const datosPost = await obtenerPostPorId(id!);
         setPost(datosPost);
 
-        const datosUser = await obtenerUserPorId(datosPost?.userId!);
+        const datosUser = await obtenerUserPorId(datosPost?.user._id!);
         setUser(datosUser);
 
         const datosImagenes = await obtenerImagenesDePost(id!);

@@ -26,14 +26,16 @@ export async function obtenerPostPorId(id: string | number): Promise<Post> {
     return post;
 }
 
-export async function obtenerImagenesDePost(id: string | number): Promise<Post["imageUrls"]> {
+export async function obtenerImagenesDePost(id: string | number): Promise<string[]> {
     const respuesta = await fetch(`http://localhost:3001/api/postimages/post/${id}`);
 
     if (!respuesta.ok) {
         throw new Error("No se pudieron obtener las imagenes");
     }
 
-    const imagenes: Post["imageUrls"] = await respuesta.json();
+    const data: { url: string; _id: string }[] = await respuesta.json();
+
+    const imagenes: string[] = data.map(img => img.url);
 
     return imagenes;
 }
