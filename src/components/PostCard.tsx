@@ -32,9 +32,14 @@ function PostCard({ post, user }: CardProps) {
 
     return (
         <Card
-        style={{cursor: 'pointer'}}
-        onClick={() => navigate(`/post/${post._id}`)}>
+            style={{ cursor: 'pointer' }}
+            onClick={() => navigate(`/post/${post._id}`)}>
             <Card.Body>
+                <div className="pd-avatar">
+                    {user?.nickname
+                        ? user.nickname.charAt(0).toUpperCase()
+                        : "?"}
+                </div>
                 <Card.Title>{user.nickname}</Card.Title>
                 <div>
                     {post.images && post.images.length > 0 && (
@@ -44,7 +49,8 @@ function PostCard({ post, user }: CardProps) {
                             alt="Imagen asociada al post"
                             onClick={(e) => {
                                 e.stopPropagation();
-                                setMostrarModal(true)}}
+                                setMostrarModal(true)
+                            }}
                             style={{ maxHeight: '300px', objectFit: 'cover', cursor: 'pointer' }}
                         >
                         </Card.Img>
@@ -57,7 +63,7 @@ function PostCard({ post, user }: CardProps) {
                     {post.tags && post.tags.length > 0 ? (
                         post.tags.map((tag, index) => (
                             <Badge bg="secondary" className="me-1" key={index}>
-                               {typeof tag === "object" ? tag.name : tag}
+                                {typeof tag === "object" ? tag.name : tag}
                             </Badge>
                         ))
                     ) : null}
@@ -66,7 +72,7 @@ function PostCard({ post, user }: CardProps) {
                     Comentarios: {cantidadComentarios}
                 </div>
             </Card.Body>
-    
+
 
             <Modal
                 show={mostrarModal}
