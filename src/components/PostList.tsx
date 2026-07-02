@@ -21,7 +21,11 @@ export function PostList() {
           obtenerUsuarios(),
         ]);
 
-        setPosts(postsObtenidos);
+        const postsOrdenados = [...postsObtenidos].sort((a, b) => 
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+
+        setPosts(postsOrdenados); 
         setUsuarios(usuariosObtenidos);
       } catch {
         setError("Ocurrió un error al cargar los posts.");
@@ -58,12 +62,18 @@ export function PostList() {
         {posts.map((post) => {
           const userId =
             typeof post.user === "object" ? post.user._id : post.user;
-          const autorPost = usuarios.find((u) => u._id === userId) ?? {
+            
+          // === FIX DE TYPESCRIPT AGREGADO AQUÍ ===
+          const autorPost = usuarios.find((u) => u._id === userId || u.id === userId) ?? {
             _id: userId,
+            id: userId,
             fullname: "",
             nickname: "Usuario desconocido",
             email: "",
-          };
+            birthDate: "",
+          } as User;
+          // =======================================
+
           return (
             <Col key={post._id} xs={12} className="mb-4">
               <PostCard post={post} user={autorPost} />

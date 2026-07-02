@@ -39,16 +39,7 @@ function Navbar() {
         </NavLink>
 
         <div className="navbar-links">
-          <NavLink
-            to="/"
-            end
-            className={({ isActive }) =>
-              `navbar-link ${isActive ? "active" : ""}`
-            }
-          >
-            Home
-          </NavLink>
-
+          
           {user ? (
             <>
               <NavLink
