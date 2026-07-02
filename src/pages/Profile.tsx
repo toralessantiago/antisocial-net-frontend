@@ -1,33 +1,27 @@
 import "../styles/pages/profile.css";
-import {
-  LuMapPin,
-  LuCalendar,
-  LuMessageCircle,
-  LuPencil,
-  LuLogOut,
-  LuArrowLeft,
-  LuBadgeCheck,
-  LuHeart,
-  LuGlobe,
-  LuCamera,
-} from "react-icons/lu";
-
+import { LuArrowLeft } from "react-icons/lu";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useContext, useEffect } from "react";
-import { UserContext } from "../context/UserContext";
+import { Modal, Button, Form, ListGroup } from "react-bootstrap";
 
+import { UserContext } from "../context/UserContext";
 import { obtenerPostsPorUsuario } from "../services/PostService";
 import { obtenerComentariosPorUsuario } from "../services/CommentService";
+import { updateUser } from "../services/UsuarioService";
+
 import type { Post } from "../data/Post";
 import type { Comment } from "../data/comments";
+import type { User } from "../data/users";
 
 import avatar1 from "../assets/avatar-1.png";
 import avatar2 from "../assets/avatar-2.png";
 import avatar3 from "../assets/avatar-3.png";
 import avatar4 from "../assets/avatar-4.png";
 
+import ProfileHeader from "../components/profile/ProfileHeader"; 
+
 function Profile() {
-  const { user: currentUser, logout } = useContext(UserContext);
+  const { user: currentUser, logout, updateCurrentUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<"posts" | "comments">("posts");
@@ -43,29 +37,35 @@ function Profile() {
 
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  
+  // Nuevos estados para listas de seguidores/seguidos
+  const [showFollowersModal, setShowFollowersModal] = useState(false);
+  const [showFollowingModal, setShowFollowingModal] = useState(false);
+
+  const [editFormData, setEditFormData] = useState({
+    fullname: currentUser?.fullname || "",
+    bio: currentUser?.bio || "",
+    location: currentUser?.location || ""
+  });
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     async function cargarDatos() {
       if (!currentUser) return;
       try {
         setCargando(true);
-        const userId = currentUser.id;
+        const userId = currentUser.id || currentUser._id;
         
         const [posts, comments] = await Promise.all([
           obtenerPostsPorUsuario(userId),
           obtenerComentariosPorUsuario(userId).catch(() => []) 
         ]);
 
-        // === LÓGICA DE ORDENAMIENTO AGREGADA AQUÍ ===
         const postsOrdenados = [...posts].sort((a, b) => 
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
-        // ============================================
 
-        console.log("Comentarios:", comments);
-        console.log("UserId:", userId);
-        console.log(currentUser);
-        setMisPosts(postsOrdenados); // Usamos el array ordenado
+        setMisPosts(postsOrdenados);
         setMisComentarios(comments);
       } catch (error) {
         console.error("Error cargando perfil:", error);
@@ -76,11 +76,32 @@ function Profile() {
     cargarDatos();
   }, [currentUser]);
 
-  const handleLogout = () => { logout(); navigate("/login"); };
+  const handleLogout = () => { 
+    logout(); 
+    navigate("/login"); 
+  };
+
+  const handleGuardarCambios = async () => {
+    setIsUpdating(true);
+    try {
+      const userId = currentUser.id || currentUser._id;
+      const respuesta = await updateUser(userId, editFormData);
+      
+      const usuarioActualizado = {
+        ...currentUser,
+        ...respuesta.data
+      }; 
+      
+      updateCurrentUser(usuarioActualizado);
+      setShowModal(false);
+    } catch (error) {
+      alert("Hubo un error al guardar los cambios.");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   if (!currentUser) return <div className="text-center mt-5">Cargando perfil...</div>;
-
-  const totalLikesRecibidos = misPosts.reduce((acc, p) => acc + (Array.isArray(p.likes) ? p.likes.length : 0), 0);
 
   return (
     <div className="container profile-page mt-4">
@@ -92,40 +113,27 @@ function Profile() {
         </div>
       </div>
 
-      <div className="card profile-header shadow-sm mb-4">
-        <div className="profile-banner"></div>
-        <div className="profile-body">
-          <div className="profile-user flex-column align-items-center text-center">
-            <div className="profile-avatar-wrapper mb-3">
-              <img src={selectedAvatar} alt="Avatar" className="profile-avatar" />
-              <button className="profile-avatar-edit" onClick={() => setShowAvatarModal(true)}><LuCamera /></button>
-            </div>
-            <div className="profile-user-info w-100">
-              <h2 className="profile-name d-flex justify-content-center align-items-center gap-2">
-                @{currentUser.nickname} {currentUser.verified && <LuBadgeCheck size={22} color="var(--accent)" />}
-              </h2>
-              <p className="profile-stats justify-content-center">
-                <strong>{misPosts.length}</strong> publicaciones • <strong>{currentUser.followers?.length || 0}</strong> seguidores
-              </p>
-              <div className="profile-extra-stats justify-content-center mb-3">
-                <span><LuHeart className="me-1" /> {totalLikesRecibidos} Me gusta recibidos</span>
-              </div>
-              <p className="profile-bio mx-auto" style={{ maxWidth: "500px" }}>{currentUser.bio || "Todavía no escribió una biografía."}</p>
-            </div>
-          </div>
-          <div className="profile-actions justify-content-center mt-4">
-            <button className="btn btn-outline-secondary" onClick={() => setShowModal(true)}><LuPencil className="me-2" /> Editar perfil</button>
-            <button className="btn btn-primary" onClick={handleLogout}><LuLogOut className="me-2" /> Cerrar sesión</button>
-          </div>
-        </div>
-      </div>
+      <ProfileHeader 
+        user={currentUser}
+        posts={misPosts}
+        selectedAvatar={selectedAvatar}
+        onEditProfile={() => setShowModal(true)}
+        onAvatarClick={() => setShowAvatarModal(true)}
+        onLogout={handleLogout}
+        onFollowersClick={() => setShowFollowersModal(true)}
+        onFollowingClick={() => setShowFollowingModal(true)}
+      />
 
       <ul className="nav nav-tabs profile-tabs mb-4 justify-content-center">
         <li className="nav-item">
-          <button className={`nav-link ${activeTab === "posts" ? "active" : ""}`} onClick={() => setActiveTab("posts")}>Publicaciones</button>
+          <button className={`nav-link ${activeTab === "posts" ? "active" : ""}`} onClick={() => setActiveTab("posts")}>
+            Publicaciones
+          </button>
         </li>
         <li className="nav-item">
-          <button className={`nav-link ${activeTab === "comments" ? "active" : ""}`} onClick={() => setActiveTab("comments")}>Comentarios</button>
+          <button className={`nav-link ${activeTab === "comments" ? "active" : ""}`} onClick={() => setActiveTab("comments")}>
+            Comentarios
+          </button>
         </li>
       </ul>
 
@@ -144,12 +152,101 @@ function Profile() {
             <div key={c._id} className="card shadow-sm mb-3">
               <div className="card-body">
                 <p className="mb-1"><em>"{c.content}"</em></p>
-                <Link to={`/post/${typeof c.post === 'string' ? c.post : c.post._id}`} className="btn btn-outline-primary btn-sm">Ver publicación</Link>
+                {/* BOTÓN VERDE APLICADO AQUÍ */}
+                <Link to={`/post/${typeof c.post === 'string' ? c.post : c.post?._id}`} className="btn btn-outline-success btn-sm mt-2">
+                  Ver publicación
+                </Link>
               </div>
             </div>
           ))
         )
       )}
+
+      {/* MODAL: SEGUIDORES */}
+      <Modal show={showFollowersModal} onHide={() => setShowFollowersModal(false)} centered scrollable>
+        <Modal.Header closeButton>
+          <Modal.Title>Seguidores</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {currentUser.followers && currentUser.followers.length > 0 ? (
+            <ListGroup variant="flush">
+              {currentUser.followers.map((follower: any, idx: number) => (
+                <ListGroup.Item key={idx} className="d-flex align-items-center gap-2 px-0 border-bottom-0 mb-2">
+                  <div className="bg-secondary text-white rounded-circle d-flex justify-content-center align-items-center" style={{width: "40px", height: "40px"}}>
+                    {follower.nickname ? follower.nickname.charAt(0).toUpperCase() : "?"}
+                  </div>
+                  <div>
+                    <strong className="d-block">{follower.fullname || "Usuario"}</strong>
+                    <span className="text-muted" style={{fontSize: "14px"}}>@{follower.nickname || "usuario"}</span>
+                  </div>
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          ) : (
+            <p className="text-muted text-center my-3">Aún no tenés seguidores.</p>
+          )}
+        </Modal.Body>
+      </Modal>
+
+      {/* MODAL: SEGUIDOS */}
+      <Modal show={showFollowingModal} onHide={() => setShowFollowingModal(false)} centered scrollable>
+        <Modal.Header closeButton>
+          <Modal.Title>Siguiendo</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {currentUser.following && currentUser.following.length > 0 ? (
+            <ListGroup variant="flush">
+              {currentUser.following.map((followed: any, idx: number) => (
+                <ListGroup.Item key={idx} className="d-flex align-items-center gap-2 px-0 border-bottom-0 mb-2">
+                  <div className="bg-secondary text-white rounded-circle d-flex justify-content-center align-items-center" style={{width: "40px", height: "40px"}}>
+                    {followed.nickname ? followed.nickname.charAt(0).toUpperCase() : "?"}
+                  </div>
+                  <div>
+                    <strong className="d-block">{followed.fullname || "Usuario"}</strong>
+                    <span className="text-muted" style={{fontSize: "14px"}}>@{followed.nickname || "usuario"}</span>
+                  </div>
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          ) : (
+            <p className="text-muted text-center my-3">No seguís a nadie todavía.</p>
+          )}
+        </Modal.Body>
+      </Modal>
+
+      {/* MODAL: EDITAR PERFIL */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton><Modal.Title>Editar Perfil</Modal.Title></Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Nombre completo</Form.Label>
+              <Form.Control type="text" value={editFormData.fullname} onChange={(e) => setEditFormData({...editFormData, fullname: e.target.value})} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Biografía</Form.Label>
+              <Form.Control as="textarea" rows={3} value={editFormData.bio} onChange={(e) => setEditFormData({...editFormData, bio: e.target.value})} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Ubicación</Form.Label>
+              <Form.Control type="text" value={editFormData.location} onChange={(e) => setEditFormData({...editFormData, location: e.target.value})} />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)} disabled={isUpdating}>Cancelar</Button>
+          <Button variant="primary" onClick={handleGuardarCambios} disabled={isUpdating}>{isUpdating ? "Guardando..." : "Guardar cambios"}</Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showAvatarModal} onHide={() => setShowAvatarModal(false)} centered>
+        <Modal.Header closeButton><Modal.Title>Seleccionar Avatar</Modal.Title></Modal.Header>
+        <Modal.Body className="d-flex justify-content-center gap-3">
+          {avatars.map((av, index) => (
+            <img key={index} src={av} alt={`Avatar ${index + 1}`} style={{ width: "60px", cursor: "pointer", border: selectedAvatar === av ? "3px solid var(--accent)" : "none", borderRadius: "50%" }} onClick={() => { setSelectedAvatar(av); localStorage.setItem("avatar", index.toString()); setShowAvatarModal(false); }} />
+          ))}
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }

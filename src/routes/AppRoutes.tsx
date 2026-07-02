@@ -8,6 +8,7 @@ import PostDetail from "../pages/PostDetail";
 import CreatePost from "../pages/CreatePost";
 import Feed from "../pages/Feed"; 
 import ProtectedRoute from "../components/ProtectedRoute";
+import UserProfile from "../pages/UserProfile";
 
 function AppRoutes() {
   return (
@@ -43,6 +44,15 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <CreatePost />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/users/:id"
+        element={
+          <ProtectedRoute>
+            <UserProfile />
           </ProtectedRoute>
         }
       />
