@@ -47,3 +47,18 @@ export async function updateUser(id: string, data: Partial<User>): Promise<{ dat
 
     return { data: user };
 }
+
+export async function followUser(userId: string, targetId: string): Promise<void> {
+  const respuesta = await fetch(`${API_URL}/followers/${userId}/${targetId}`, { 
+    method: "POST",
+    headers: { "Content-Type": "application/json" }
+  });
+  if (!respuesta.ok) throw new Error("Error al seguir");
+}
+
+export async function unfollowUser(userId: string, targetId: string): Promise<void> {
+  const respuesta = await fetch(`${API_URL}/followers/${userId}/${targetId}`, { 
+    method: "DELETE" 
+  });
+  if (!respuesta.ok) throw new Error("Error al dejar de seguir");
+}

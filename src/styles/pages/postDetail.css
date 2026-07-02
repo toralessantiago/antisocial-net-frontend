@@ -75,6 +75,9 @@
   margin-bottom: 20px;
 }
 
+[data-theme='dark'] .lu-heart {
+  stroke-width: 2px;
+}
 .pd-avatar {
   width: 40px;
   height: 40px;
