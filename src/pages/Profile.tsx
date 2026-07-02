@@ -55,10 +55,17 @@ function Profile() {
           obtenerPostsPorUsuario(userId),
           obtenerComentariosPorUsuario(userId).catch(() => []) 
         ]);
+
+        // === LÓGICA DE ORDENAMIENTO AGREGADA AQUÍ ===
+        const postsOrdenados = [...posts].sort((a, b) => 
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        // ============================================
+
         console.log("Comentarios:", comments);
         console.log("UserId:", userId);
         console.log(currentUser);
-        setMisPosts(posts);
+        setMisPosts(postsOrdenados); // Usamos el array ordenado
         setMisComentarios(comments);
       } catch (error) {
         console.error("Error cargando perfil:", error);
