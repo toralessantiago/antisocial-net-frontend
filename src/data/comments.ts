@@ -10,4 +10,4 @@ export type Comment = {
   };
   visible: boolean;
   createdAt: string;
-}
+};

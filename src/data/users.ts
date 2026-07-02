@@ -6,9 +6,4 @@ export type User = {
   birthDate?: string;
 }
 
-export const users = [
-  {
-    id: 1,
-    nickname: "santi"
-  }
-];
+export const users: User[] = [];

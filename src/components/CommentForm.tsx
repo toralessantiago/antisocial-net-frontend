@@ -10,14 +10,12 @@ interface CommentFormProps {
 
 function CommentForm({ postId, onCommentAdded }: CommentFormProps) {
   const { user } = useContext(UserContext);
-
   const [content, setContent] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!content.trim() || !user) return;
 
     setSending(true);
@@ -55,7 +53,6 @@ function CommentForm({ postId, onCommentAdded }: CommentFormProps) {
   return (
     <form onSubmit={handleSubmit} className="pd-comment-form">
       {error && <p className="pd-comment-error">{error}</p>}
-
       <textarea
         className="form-control pd-comment-input"
         value={content}
@@ -67,7 +64,6 @@ function CommentForm({ postId, onCommentAdded }: CommentFormProps) {
         rows={3}
         required
       />
-
       <button
         type="submit"
         className="btn-app pd-comment-btn"

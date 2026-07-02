@@ -7,14 +7,14 @@ import type { User } from "../data/users";
 import { obtenerComentarios } from "../services/CommentService";
 
 type CardProps = {
-    post: Post,
-    user: User
+    post: Post;
+    user: User;
 };
-
 
 function PostCard({ post, user }: CardProps) {
 
-    const [mostrarModal, setmostrarModal] = useState(false);
+    const [mostrarModal, setMostrarModal] = useState(false);
+
     const [cantidadComentarios, setCantidad] = useState(0);
 
     useEffect(() => {
@@ -31,7 +31,7 @@ function PostCard({ post, user }: CardProps) {
     }, [post._id]);
 
     return (
-        <Card style={{ width: '18rem' }}>
+        <Card>
             <Card.Body>
                 <Card.Title>{user.nickname}</Card.Title>
                 <div>
@@ -40,7 +40,7 @@ function PostCard({ post, user }: CardProps) {
                             variant="top"
                             src={post.images[0].url}
                             alt="Imagen asociada al post"
-                            onClick={() => setmostrarModal(true)}
+                            onClick={() => setMostrarModal(true)}
                             style={{ maxHeight: '300px', objectFit: 'cover', cursor: 'pointer' }}
                         >
                         </Card.Img>
@@ -53,7 +53,7 @@ function PostCard({ post, user }: CardProps) {
                     {post.tags && post.tags.length > 0 ? (
                         post.tags.map((tag, index) => (
                             <Badge bg="secondary" className="me-1" key={index}>
-                                {tag.name}
+                               {typeof tag === "object" ? tag.name : tag}
                             </Badge>
                         ))
                     ) : null}
@@ -70,11 +70,11 @@ function PostCard({ post, user }: CardProps) {
 
             <Modal
                 show={mostrarModal}
-                onHide={() => setmostrarModal(false)}
+                onHide={() => setMostrarModal(false)}
                 centered
-                size="lg">
-                <Modal.Header closeButton>
-                </Modal.Header>
+                size="lg"
+            >
+                <Modal.Header closeButton />
                 <Modal.Body className="text-center p-0">
                     {post.images && post.images.length > 0 && (
                         <img

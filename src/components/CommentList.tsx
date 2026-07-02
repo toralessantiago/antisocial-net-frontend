@@ -12,20 +12,25 @@ function CommentList({ comments }: CommentListProps) {
   return (
     <ul className="pd-comment-list">
       {comments.map((c) => {
-        const autor = typeof c.user === "object" ? c.user : null;
+        const autor = c.user;
+
         return (
           <li key={c._id} className="pd-comment-item">
             <div className="pd-comment-header">
               <div className="pd-comment-avatar">
-                {autor?.nickname
+                {autor.nickname
                   ? autor.nickname.charAt(0).toUpperCase()
                   : "?"}
               </div>
+
               <span className="pd-comment-author">
-                @{autor?.nickname ?? "Anónimo"}
+                @{autor.nickname}
               </span>
             </div>
-            <p className="pd-comment-content">{c.content}</p>
+
+            <p className="pd-comment-content">
+              {c.content}
+            </p>
           </li>
         );
       })}

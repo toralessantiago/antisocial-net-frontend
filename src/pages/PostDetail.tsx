@@ -2,10 +2,13 @@ import "../styles/pages/postDetail.css";
 
 import { useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import { Container, Row, Col, Card, Spinner } from "react-bootstrap";
+import { Spinner } from "react-bootstrap";
+
+import { UserContext } from "../context/UserContext";
 
 import { obtenerPostPorId } from "../services/PostService";
 import { obtenerUserPorId } from "../services/UsuarioService";
+import { obtenerComentarios } from "../services/CommentService";
 
 import CommentList from "../components/CommentList";
 import CommentForm from "../components/CommentForm";
@@ -14,42 +17,38 @@ import type { Post } from "../data/Post";
 import type { User } from "../data/users";
 import type { Comment } from "../data/comments";
 
-import { UserContext } from "../context/UserContext";
-
-import { obtenerComentarios } from "../services/CommentService";
-
 function PostDetail() {
   const { id } = useParams();
   const { user: usuarioLogueado } = useContext(UserContext);
 
   const [post, setPost] = useState<Post | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [autor, setAutor] = useState<User | null>(null);
   const [comentarios, setComentarios] = useState<Comment[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const [mostrarModal, setMostrarModal] = useState(false);
-
   useEffect(() => {
-    async function cargarPostDetail() {
-      if (!id) return;
+    if (!id) return;
 
+    async function cargarPostDetail() {
       try {
         setCargando(true);
         setError("");
 
-        const datosPost = await obtenerPostPorId(id);
+        const datosPost = await obtenerPostPorId(id!);
         setPost(datosPost);
 
-        const datosUser = await obtenerUserPorId(datosPost.user._id);
-        setUser(datosUser);
+        if (typeof datosPost.user === "object") {
+          const datosAutor = await obtenerUserPorId(datosPost.user._id);
+          setAutor(datosAutor);
+        }
 
-        const commentsData = await obtenerComentarios(id);
-        setComentarios(commentsData);
+        const comentarios = await obtenerComentarios(id!);
+        setComentarios(comentarios);
       } catch (err) {
-        console.error(err);
-        setError("No se pudo cargar la publicación");
+        console.error("Error al cargar el post:", err);
+        setError("No se pudo cargar la publicación.");
       } finally {
         setCargando(false);
       }
@@ -72,70 +71,84 @@ function PostDetail() {
 
   if (!post) return null;
 
-  return (
-    <Container className="mt-5">
-      <Row className="justify-content-center">
-        <Col md={8}>
-          <div className="post-detail-content">
-            <div className="d-flex align-items-center mb-3">
-              <div
-                className="bg-secondary text-white rounded-circle d-flex justify-content-center align-items-center me-2"
-                style={{ width: "40px", height: "40px" }}
-              >
-                {user?.nickname ? user.nickname.charAt(0).toUpperCase() : "?"}
-              </div>
+  const tagList =
+    Array.isArray(post.tags) && post.tags.length > 0
+      ? post.tags.map((tag) =>
+          typeof tag === "object" ? tag.name : tag
+        )
+      : [];
 
-              <h5 className="mb-0 text-muted">
-                @{user?.fullname || "Usuario desconocido"}
-              </h5>
+  return (
+    <div className="pd-layout">
+      <div className="pd-left">
+        <h1>Detalle</h1>
+        <p>Publicación de @{autor?.nickname ?? "desconocido"}</p>
+      </div>
+
+      <div className="pd-right-container">
+        <div className="pd-right">
+          <div className="pd-header">
+            <div className="pd-avatar">
+              {autor?.nickname
+                ? autor.nickname.charAt(0).toUpperCase()
+                : "?"}
             </div>
 
-            <h1>{post.description}</h1>
+            <div>
+              <span className="pd-author">
+                @{autor?.nickname ?? "Usuario desconocido"}
+              </span>
 
-            <Card>
-              {post.images && post.images.length > 0 && (
-                <Card.Img
-                  variant="top"
-                  src={post.images[0].url}
-                  alt="Imagen asociada al post"
-                  onClick={() => setMostrarModal(true)}
-                  style={{
-                    maxHeight: "300px",
-                    objectFit: "cover",
-                    cursor: "pointer",
-                  }}
+              <time className="pd-date">
+                {new Date(post.createdAt).toLocaleDateString()}
+              </time>
+            </div>
+          </div>
+
+          <p className="pd-description">{post.description}</p>
+
+          {post.images.length > 0 && (
+            <div className="pd-images">
+              {post.images.map((img) => (
+                <img
+                  key={img._id}
+                  src={img.url}
+                  alt="Imagen del post"
+                  className="pd-image"
                 />
-              )}
-            </Card>
-          </div>
+              ))}
+            </div>
+          )}
 
-          <h3 className="mt-4">Tags</h3>
-          <div className="mb-4">
-            {post.tags.length > 0 ? (
-              post.tags.map((tag) => (
-                <span key={tag._id} className="badge bg-primary me-2">
-                  {tag.name}
+          {tagList.length > 0 && (
+            <div className="pd-tags">
+              {tagList.map((tag, index) => (
+                <span key={index} className="pd-tag">
+                  {tag}
                 </span>
-              ))
-            ) : (
-              <span className="text-muted">Sin tags</span>
-            )}
-          </div>
+              ))}
+            </div>
+          )}
 
-          <h3>Comentarios</h3>
+          <hr className="pd-divider" />
+
+          <h3 className="pd-section-title">Comentarios</h3>
 
           <CommentList comments={comentarios} />
 
-          <div className="mt-4">
-            {usuarioLogueado ? (
-              <CommentForm postId={id!} onCommentAdded={handleCommentAdded} />
-            ) : (
-              <p>Iniciá sesión para comentar.</p>
-            )}
-          </div>
-        </Col>
-      </Row>
-    </Container>
+          {usuarioLogueado ? (
+            <CommentForm
+              postId={id!}
+              onCommentAdded={handleCommentAdded}
+            />
+          ) : (
+            <p className="pd-login-hint">
+              Iniciá sesión para comentar.
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 

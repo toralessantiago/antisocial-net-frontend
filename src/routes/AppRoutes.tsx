@@ -12,13 +12,13 @@ import ProtectedRoute from "../components/ProtectedRoute";
 function AppRoutes() {
   return (
     <Routes>
-      {/* Rutas Públicas */}
+      {/* --- Rutas Públicas --- */}
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/post/:id" element={<PostDetail />} />
 
-      {/* Rutas Protegidas */}
+      {/* --- Rutas Protegidas --- */}
       <Route
         path="/feed"
         element={
@@ -37,6 +37,7 @@ function AppRoutes() {
         }
       />
 
+      {/* Corrección: Ahora crear un post requiere estar logueado */}
       <Route
         path="/create-post"
         element={

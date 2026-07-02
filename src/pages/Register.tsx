@@ -223,7 +223,7 @@ function Register() {
         birthDate: `${form.year}-${form.month.padStart(2, "0")}-${form.day.padStart(2, "0")}`,
       };
 
-      const response = await fetch(API_URL, {
+      const response = await fetch(`${API_URL}/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

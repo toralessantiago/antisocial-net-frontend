@@ -1,28 +1,23 @@
 import type { Post } from "../data/Post";
 
-const API_URL = "http://localhost:3000/api/posts";
+const API_URL = "http://localhost:3000/api";
 
 export async function obtenerPosts(): Promise<Post[]> {
-    const respuesta = await fetch(API_URL);
+  const respuesta = await fetch(`${API_URL}/posts`);
 
-    if (!respuesta.ok) {
-        throw new Error("No se pudieron obtener los posts");
-    }
+  if (!respuesta.ok) {
+    throw new Error("No se pudieron obtener los posts");
+  }
 
-    const posts: Post[] = await respuesta.json();
-
-    return posts;
+  return await respuesta.json();
 }
 
-export async function obtenerPostPorId(id: string | number): Promise<Post> {
-    const respuesta = await fetch(`${API_URL}/${id}`);
+export async function obtenerPostPorId(id: string): Promise<Post> {
+  const respuesta = await fetch(`${API_URL}/posts/${id}`);
 
-    if (!respuesta.ok) {
-        throw new Error("No se pudo obtener el post");
-    }
+  if (!respuesta.ok) {
+    throw new Error("No se pudo obtener el post");
+  }
 
-    const post: Post = await respuesta.json();
-
-    return post;
+  return await respuesta.json();
 }
-

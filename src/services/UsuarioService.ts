@@ -1,9 +1,9 @@
 import type { User } from "../data/users";
 
-const API_URL = "http://localhost:3000/api/users";
+const API_URL = "http://localhost:3000/api";
 
 export async function obtenerUsuarios(): Promise<User[]> {
-    const respuesta = await fetch(API_URL);
+    const respuesta = await fetch(`${API_URL}/users`);
 
     if (!respuesta.ok) {
         throw new Error("No se pudieron obtener los usuarios");
@@ -19,7 +19,7 @@ export async function obtenerUsuarios(): Promise<User[]> {
 }
 
 export async function obtenerUserPorId(id: string): Promise<User> {
-    const respuesta = await fetch(`http://localhost:3000/api/users/${id}`);
+    const respuesta = await fetch(`http://localhost:3000/users/${id}`);
 
     if (!respuesta.ok) {
         throw new Error("No se pudo obtener el user");
