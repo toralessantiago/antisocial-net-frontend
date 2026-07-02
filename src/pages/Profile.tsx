@@ -35,6 +35,8 @@ function Profile() {
   const { user, logout } = useContext(UserContext);
   const navigate = useNavigate();
 
+  const userId = user?._id ?? user?.id;
+
   const {
     profile,
     editProfile,
@@ -45,7 +47,7 @@ function Profile() {
     likedPosts,
     saveProfile,
     likePost,
-  } = useProfileData(user?._id);
+  } = useProfileData(userId);
 
   const handleLogout = () => {
     logout();
@@ -114,7 +116,7 @@ function Profile() {
         <PostsTab
           posts={posts}
           nickname={profile.nickname}
-          currentUserId={user._id}
+          currentUserId={userId}
           commentsByPost={commentsByPost}
           expandedPostId={expandedPostId}
           onLike={handleLike}

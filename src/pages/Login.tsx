@@ -4,7 +4,7 @@ import { UserContext } from "../context/UserContext";
 import { FaAt, FaEye, FaEyeSlash } from "react-icons/fa";
 import "../styles/pages/auth.css";
 
-const API_URL = "http://localhost:3000/api/users"; 
+const API_URL = "http://localhost:3000/api/users";
 
 function Login() {
   const [nickname, setNickName] = useState("");
@@ -51,9 +51,8 @@ function Login() {
       // Login exitoso: guardamos el usuario y navegamos al perfil
       login(jsonResponse.data);
       navigate("/profile");
-
     } catch (err) {
-      console.error('Error inesperado:', err);
+      console.error("Error inesperado:", err);
       setError("No se pudo conectar con el servidor. Intenta más tarde.");
     } finally {
       setIsLoading(false);
@@ -81,7 +80,9 @@ function Login() {
             <div className="form-group">
               <label className="form-label">Usuario</label>
               <div className="nickname-wrapper">
-                <span className="nickname-prefix"><FaAt /></span>
+                <span className="nickname-prefix">
+                  <FaAt />
+                </span>
                 <input
                   type="text"
                   className={`form-control nickname-input ${getBorderClass("nickname", nickname)}`}
@@ -121,9 +122,15 @@ function Login() {
               </div>
             </div>
 
-            {error && <small className="text-danger text-center">{error}</small>}
+            {error && (
+              <small className="text-danger text-center">{error}</small>
+            )}
 
-            <button type="submit" className="btn-app w-100" disabled={isLoading}>
+            <button
+              type="submit"
+              className="btn-app w-100"
+              disabled={isLoading}
+            >
               {isLoading ? "Ingresando..." : "Ingresar"}
             </button>
           </form>
