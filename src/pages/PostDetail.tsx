@@ -1,6 +1,6 @@
 import "../styles/pages/postDetail.css";
 
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { Spinner } from "react-bootstrap";
 
@@ -20,6 +20,7 @@ import type { Comment } from "../data/comments";
 function PostDetail() {
   const { id } = useParams();
   const { user: usuarioLogueado } = useContext(UserContext);
+  const navigate = useNavigate();
 
   const [post, setPost] = useState<Post | null>(null);
   const [autor, setAutor] = useState<User | null>(null);
@@ -94,7 +95,8 @@ function PostDetail() {
                 : "?"}
             </div>
 
-            <div>
+            <div onClick={() => navigate(`/users/${autor?._id}`)}
+              style={{cursor: "pointer"}}>
               <span className="pd-author">
                 @{autor?.nickname ?? "Usuario desconocido"}
               </span>

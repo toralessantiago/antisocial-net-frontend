@@ -1,5 +1,5 @@
 import { Card, Modal, Badge } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import type { Post } from "../data/Post";
@@ -14,8 +14,8 @@ type CardProps = {
 function PostCard({ post, user }: CardProps) {
 
     const [mostrarModal, setMostrarModal] = useState(false);
-
     const [cantidadComentarios, setCantidad] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchCantidad() {
@@ -31,7 +31,9 @@ function PostCard({ post, user }: CardProps) {
     }, [post._id]);
 
     return (
-        <Card>
+        <Card
+        style={{cursor: 'pointer'}}
+        onClick={() => navigate(`/post/${post._id}`)}>
             <Card.Body>
                 <Card.Title>{user.nickname}</Card.Title>
                 <div>
@@ -40,7 +42,9 @@ function PostCard({ post, user }: CardProps) {
                             variant="top"
                             src={post.images[0].url}
                             alt="Imagen asociada al post"
-                            onClick={() => setMostrarModal(true)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setMostrarModal(true)}}
                             style={{ maxHeight: '300px', objectFit: 'cover', cursor: 'pointer' }}
                         >
                         </Card.Img>
@@ -62,11 +66,7 @@ function PostCard({ post, user }: CardProps) {
                     Comentarios: {cantidadComentarios}
                 </div>
             </Card.Body>
-            <Card.Body>
-                <Link to={`/post/${post._id}`} className="btn btn-primary">
-                    Ver más
-                </Link>
-            </Card.Body>
+    
 
             <Modal
                 show={mostrarModal}

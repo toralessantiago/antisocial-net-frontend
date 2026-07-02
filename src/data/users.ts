@@ -4,6 +4,7 @@ export type User = {
   nickname: string;
   email: string;
   birthDate?: string;
+
 }
 
 export const users: User[] = [];
