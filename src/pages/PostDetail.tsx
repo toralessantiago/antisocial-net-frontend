@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Spinner } from "react-bootstrap";
 
-import { obtenerPostPorId, obtenerImagenesDePost } from "../services/PostService";
+import { obtenerPostPorId } from "../services/PostService";
 import { obtenerUserPorId } from "../services/UsuarioService";
 // import { obtenerComentarios } from "../services/CommentService";
 
@@ -19,7 +19,6 @@ function PostDetail() {
   const { id } = useParams();
   const [post, setPost] = useState<Post | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [imagenes, setImagenes] = useState<string[]>([]);
   const [cargando, setCargando] = useState(true);
 
   const [mostrarModal, setmostrarModal] = useState(false);
@@ -35,10 +34,6 @@ function PostDetail() {
         const datosUser = await obtenerUserPorId(datosPost?.user._id!);
         setUser(datosUser);
 
-        const datosImagenes = await obtenerImagenesDePost(id!);
-        setImagenes(datosImagenes);
-
-        
       } catch (error) {
         console.error("Error al cargar mensaje", error);
       } finally {
@@ -69,10 +64,10 @@ function PostDetail() {
             </div>
             <h1>{post?.description}</h1>
             <Card>
-              {imagenes && imagenes.length > 0 && (
+              {post?.images && post.images.length > 0 && (
                 <Card.Img
                   variant="top"
-                  src={imagenes[0]}
+                  src={post.images[0].url}
                   alt="Imagen asociada al post"
                   onClick={() => setmostrarModal(true)}
                   style={{ maxHeight: '300px', objectFit: 'cover', cursor: 'pointer' }}

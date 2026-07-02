@@ -18,7 +18,7 @@ export default function CommentForm({ postId }: CommentFormProps) {
             setEnviando(true);
             setError("");
 
-            const respuesta = await fetch("http://localhost:3001/api/comments", {
+            const respuesta = await fetch(`http://localhost:3000/api/comments/post/${postId}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
