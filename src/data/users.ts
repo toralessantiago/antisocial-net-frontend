@@ -1,11 +1,7 @@
 export type User = {
-  id: number;
+  _id: string;
   nickname: string;
-}
+  email: string;
+};
 
-export const users = [
-  {
-    id: 1,
-    nickname: "santi"
-  }
-];
+export const users: User[] = [];

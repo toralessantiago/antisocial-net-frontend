@@ -1,0 +1,261 @@
+/* ================= POST DETAIL - MISMOS ESTILOS QUE AUTH ================= */
+.pd-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: 100vh;
+  background: var(--bg) !important;
+  color: var(--text);
+  transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+@media (min-width: 900px) {
+  .pd-layout {
+    grid-template-columns: 1fr 1.2fr;
+  }
+}
+
+.pd-left {
+  display: none;
+  background: var(--bg);
+  color: var(--text);
+  padding: 60px;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  border-right: 1px solid var(--border);
+}
+
+@media (min-width: 900px) {
+  .pd-left {
+    display: flex;
+  }
+}
+
+.pd-left h1 {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.pd-left p {
+  font-size: 16px;
+  opacity: 0.7;
+}
+
+.pd-right-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+  width: 100%;
+}
+
+.pd-right {
+  width: 100%;
+  max-width: 520px;
+  padding: 32px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.65) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+}
+
+[data-bs-theme="dark"] .pd-right {
+  background: rgba(15, 15, 15, 0.65) !important;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+}
+
+/* Header */
+.pd-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.pd-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.pd-author {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text);
+  display: block;
+}
+
+.pd-date {
+  font-size: 12px;
+  color: var(--text);
+  opacity: 0.6;
+}
+
+/* Description */
+.pd-description {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+
+/* Images */
+.pd-images {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.pd-image {
+  width: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+  max-height: 400px;
+}
+
+/* Tags */
+.pd-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.pd-tag {
+  padding: 4px 12px;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Divider */
+.pd-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 20px 0;
+}
+
+/* Section title */
+.pd-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+
+/* Comment list */
+.pd-comment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+}
+
+.pd-comment-item {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.pd-comment-item:last-child {
+  border-bottom: none;
+}
+
+.pd-comment-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.pd-comment-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--text) 15%, transparent);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.pd-comment-author {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.pd-comment-content {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.5;
+  margin: 0;
+  padding-left: 36px;
+}
+
+.pd-no-comments {
+  font-size: 14px;
+  color: var(--text);
+  opacity: 0.5;
+  font-style: italic;
+  margin-bottom: 20px;
+}
+
+/* Comment form */
+.pd-comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pd-comment-input {
+  height: auto !important;
+  min-height: 80px;
+  resize: vertical;
+}
+
+.pd-comment-btn {
+  align-self: flex-end;
+  width: auto !important;
+  padding: 0 24px !important;
+}
+
+.pd-comment-error {
+  font-size: 13px;
+  color: #dc3545;
+  margin: 0;
+}
+
+.pd-login-hint {
+  font-size: 14px;
+  color: var(--text);
+  opacity: 0.5;
+  font-style: italic;
+}
+
+/* Loading / Error */
+.pd-loading,
+.pd-error {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 16px;
+}
+
+.pd-error {
+  color: #dc3545;
+}

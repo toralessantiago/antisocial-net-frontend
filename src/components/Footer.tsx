@@ -1,16 +1,28 @@
 function Footer() {
   return (
-    <footer style={{backgroundColor: '#2e2e2e', padding: '2rem 1.5rem', fontSize: '0.875rem', color: '#64748b'}}>
-      <div style={{maxWidth: '1400px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem', textAlign: 'center'}}>
-        <div>
-          <div style={{fontWeight: 'bold', color: '#ffffff', fontSize: '1.1rem'}}>UnaHur Anti-Social Net</div>
-        </div>
-        <div style={{display: 'flex', justifyContent: 'center', gap: '1.5rem', borderTop: '1px solid #ffffff', paddingTop: '1rem'}}>
-          <a href="https://www.argentina.gob.ar/terminos-y-condiciones" style={{color: '#ffffff', textDecoration: 'none'}}>Términos y condiciones</a>
-          <a href="https://github.com/toralessantiago/antisocial-net-frontend.git" target="_blank" rel="noreferrer" style={{ color: '#ffffff', textDecoration: 'none'}}>GitHub</a>
-        </div>
+    <footer className="footer-container">
+      <div className="footer-links-row">
+        <a href="https://www.argentina.gob.ar/terminos-y-condiciones" target="_blank" rel="noreferrer">
+          Términos
+        </a>
+        <span className="footer-dot">&middot;</span>
+        <a href="https://www.unesco.org/mil4teachers/sites/default/files/medias/fichiers/2024/03/MIL_Curriculum_Module_8_SP.pdf" target="_blank" rel="noreferrer">
+          Privacidad
+        </a>
+        <span className="footer-dot">&middot;</span>
+        <a href="https://share.google/JtRxhSq1zpzhq96si" target="_blank" rel="noreferrer">
+          Cookies
+        </a>
+        <span className="footer-dot">&middot;</span>
+        <a href="https://share.google/VflTH62Gr2u3h8biA" target="_blank" rel="noreferrer">
+          Accesibilidad
+        </a>
+        <span className="footer-dot">&middot;</span>
+        <a href="https://github.com/toralessantiago/antisocial-net-frontend.git" target="_blank" rel="noreferrer">
+          GitHub
+        </a>
       </div>
-      <span style={{color: '#ffffff'}}>© 2026. Todos los derechos reservados.</span>
+      <p className="footer-copy">&copy; 2026 Anti-Social.</p>
     </footer>
   );
 }

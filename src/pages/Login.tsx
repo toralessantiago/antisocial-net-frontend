@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { FaAt, FaEye, FaEyeSlash } from "react-icons/fa";
 import "../styles/pages/auth.css";
-
-const API_URL = "http://localhost:3001/api/users"; 
+import API_URL from "../services/api"; 
 
 function Login() {
   const [nickname, setNickName] = useState("");
@@ -27,32 +26,26 @@ function Login() {
       return;
     }
 
-    if (password !== "123456") {
-      setError("Usuario o contraseña incorrecta");
-      return;
-    }
-
     setIsLoading(true);
 
     try {
-      const response = await fetch(API_URL);
+      const response = await fetch(`${API_URL}/users`);
 
       if (!response.ok) {
         throw new Error('Error en la respuesta del servidor. Ver detalle: ' + response.status);
       }
 
       const jsonResponse = await response.json();
-      const usersArray = jsonResponse.data;
-      
-      const usuario = usersArray.find((user: any) => user.nickname === nickname);
 
-      if (!usuario) {
-        setError("Usuario o contraseña incorrecta");
+      // Si el backend responde con error (401 credenciales incorrectas, etc.)
+      if (!response.ok) {
+        setError(jsonResponse.message || "Usuario o contraseña incorrecta");
         setIsLoading(false);
         return;
       }
 
-      login(usuario);
+      // Login exitoso: guardamos el usuario y navegamos al perfil
+      login(jsonResponse.data);
       navigate("/profile");
 
     } catch (err) {

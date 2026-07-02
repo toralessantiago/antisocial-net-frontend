@@ -1,9 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import API_URL from "../services/api";
 import "../styles/pages/auth.css";
-
-const API_URL = "http://localhost:3001/api/users";
 
 function Register() {
   const navigate = useNavigate();
@@ -223,7 +222,7 @@ function Register() {
         birthDate: `${form.year}-${form.month.padStart(2, "0")}-${form.day.padStart(2, "0")}`,
       };
 
-      const response = await fetch(API_URL, {
+      const response = await fetch(`${API_URL}/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

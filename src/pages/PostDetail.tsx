@@ -1,95 +1,143 @@
-import "../styles/pages/postDetail.css";
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Spinner } from "react-bootstrap";
-import { obtenerImagenesDePost, obtenerPostPorId } from "../services/PostService";
-import { obtenerUserPorId } from "../services/UsuarioService";
-import { obtenerComentarios } from "../services/CommentService";
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "../context/UserContext";
+import API_URL from "../services/api";
+import CommentList from "../components/CommentList";
+import CommentForm from "../components/CommentForm";
 import type { Post } from "../data/Post";
-import type { User } from "../data/users";
 import type { Comment } from "../data/comments";
+import "../styles/pages/postDetail.css";
 
 function PostDetail() {
   const { id } = useParams();
+  const { user } = useContext(UserContext);
+
   const [post, setPost] = useState<Post | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [imagenes, setImagenes] = useState<string[]>([]);
   const [comentarios, setComentarios] = useState<Comment[]>([]);
   const [cargando, setCargando] = useState(true);
-
-  const [mostrarModal, setmostrarModal] = useState(false);
+  const [error, setError] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
+    if (!id) return;
+
     async function cargarPostDetail() {
       try {
         setCargando(true);
+        setError("");
 
-        const datosPost = await obtenerPostPorId(id!);
-        setPost(datosPost);
+        const postRes = await fetch(`${API_URL}/posts/${id}`);
+        if (!postRes.ok) throw new Error("Post no encontrado");
+        const postData: Post = await postRes.json();
+        setPost(postData);
 
-        const [datosUser, datosImagen, datosComment] = await Promise.all([
-          obtenerUserPorId(post?.userId!),
-          obtenerImagenesDePost(id!),
-          obtenerComentarios(id!)
-        ])
-        
-        setUser(datosUser);
-        setImagenes(datosImagen);
-        setComentarios(datosComment);
-      } catch (error) {
-        console.error("Error al cargar mensaje", error);
+        const commentsRes = await fetch(`${API_URL}/comments/post/${id}`);
+        if (commentsRes.ok) {
+          const commentsData: Comment[] = await commentsRes.json();
+          setComentarios(commentsData);
+        }
+      } catch (err) {
+        console.error("Error al cargar post:", err);
+        setError("No se pudo cargar la publicación");
       } finally {
         setCargando(false);
       }
     }
-    if (id) cargarPostDetail();
 
-  }, [id]
-  );
+    cargarPostDetail();
+  }, [id, refreshKey]);
 
-  if (cargando) return <Spinner animation="border" />;
+  const handleCommentAdded = () => {
+    setRefreshKey((prev) => prev + 1);
+  };
 
+  if (cargando) {
+    return (
+      <div className="pd-container">
+        <div className="pd-loading">Cargando...</div>
+      </div>
+    );
+  }
 
+  if (error) {
+    return (
+      <div className="pd-container">
+        <div className="pd-error">{error}</div>
+      </div>
+    );
+  }
+
+  if (!post) return null;
+
+  const autor = typeof post.user === "object" ? post.user : null;
+  const tagList =
+    Array.isArray(post.tags) && post.tags.length > 0
+      ? post.tags.map((t) => (typeof t === "object" ? t.name : t))
+      : [];
 
   return (
-    <Container className="mt-5">
-      <Row className="justify-content-center">
-        <Col md={8}>
-          <div className="post-detail-content">
-            <div className="d-flex align-items-center mb-3">
-              <div className="bg-secondary text-white rounded-circle d-flex justify-content-center align-items-center me-2" style={{ width: '40px', height: '40px' }}>
-                {user?.nickname ? user.nickname.charAt(0).toUpperCase() : "?"}
-              </div>
-              <h5 className="mb-0 text-muted">
-                @{user ? user.nickname : "Usuario desconocido"}
-              </h5>
+    <div className="pd-layout">
+      <div className="pd-left">
+        <h1>Detalle</h1>
+        <p>Publicación de @{autor?.nickname ?? "desconocido"}</p>
+      </div>
+
+      <div className="pd-right-container">
+        <div className="pd-right">
+          <div className="pd-header">
+            <div className="pd-avatar">
+              {autor?.nickname
+                ? autor.nickname.charAt(0).toUpperCase()
+                : "?"}
             </div>
-            <h1>{post?.description}</h1>
-            <Card>
-            {post?.imageUrls && post.imageUrls.length > 0 && (
-              <Card.Img
-                variant="top"
-                src={post.imageUrls[0]}
-                alt="Imagen asociada al post"
-                onClick={() => setmostrarModal(true)}
-                style={{ maxHeight: '300px', objectFit: 'cover', cursor: 'pointer' }}
-              >
-              </Card.Img>
-            )}
-            </Card>
+            <div>
+              <span className="pd-author">
+                @{autor?.nickname ?? "Usuario desconocido"}
+              </span>
+              <time className="pd-date">
+                {new Date(post.createdAt).toLocaleDateString()}
+              </time>
+            </div>
           </div>
 
-          <hr className="my-4" />
+          <p className="pd-description">{post.description}</p>
 
-          <h3>Comentarios</h3>
+          {post.images && post.images.length > 0 && (
+            <div className="pd-images">
+              {post.images.map((img) => (
+                <img
+                  key={img._id}
+                  src={img.url}
+                  alt="Imagen del post"
+                  className="pd-image"
+                />
+              ))}
+            </div>
+          )}
+
+          {tagList.length > 0 && (
+            <div className="pd-tags">
+              {tagList.map((name, i) => (
+                <span key={i} className="pd-tag">
+                  {name}
+                </span>
+              ))}
+            </div>
+          )}
+
+          <hr className="pd-divider" />
+
+          <h3 className="pd-section-title">Comentarios</h3>
           <CommentList comments={comentarios} />
 
-          <div className="mt-4">
-            <CommentForm postId={id} />
-          </div>
-        </Col>
-      </Row>
-    </Container>
+          {user ? (
+            <CommentForm postId={id!} onCommentAdded={handleCommentAdded} />
+          ) : (
+            <p className="pd-login-hint">Iniciá sesión para comentar</p>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 

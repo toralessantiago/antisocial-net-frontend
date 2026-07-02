@@ -3,7 +3,6 @@ body,
 #root {
   height: 100%;
   margin: 0;
-  padding-top: 20px;
 }
 
 body {
@@ -15,4 +14,23 @@ body {
 /* textos globales */
 h1, h2, h3, p, span, label {
   color: var(--text);
+}
+
+/* ================= TRANSICIÓN GLOBAL DE TEMA OSCURO / CLAR0 ================= */
+
+
+body, 
+.register-layout,
+.register-left,
+.register-right,
+.form-control,
+.custom-select-dropdown,
+.custom-select-item,
+h1, h2, h3, h4, h5, h6, p, span, a, label, button, svg {
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
