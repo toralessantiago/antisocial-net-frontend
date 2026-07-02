@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { UserContext } from "../context/UserContext";
+import { crearComentario } from "../services/CommentService";
 
-const API_URL = "http://localhost:3000/api";
 
 interface CommentFormProps {
   postId: string;
@@ -18,29 +18,24 @@ function CommentForm({ postId, onCommentAdded }: CommentFormProps) {
     e.preventDefault();
     if (!content.trim() || !user) return;
 
-    setSending(true);
-    setError("");
-    console.log("Usuario completo:", user);
-    console.log("ID:", user?._id);
-    try {
-      const res = await fetch(`${API_URL}/comments`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          content: content.trim(),
-          user: user.id,
-          post: postId,
-        }),
-      });
+    const userId = user?._id ?? user?.id;
 
-      if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.error || "Error al comentar");
-      }
+    if (!userId) {
+      setError("Tenes que iniciar sesion para comentar");
+      return;
+    }
+
+
+    try {
+      setSending(true);
+      setError("");
+      console.log("Usuario completo:", user);
+      console.log("ID:", user?._id ?? user?.id);
+
+      await crearComentario(content, userId, postId);
 
       setContent("");
+      
       onCommentAdded();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Error al comentar";
