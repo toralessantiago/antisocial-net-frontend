@@ -6,16 +6,13 @@ import Register from "../pages/Register";
 import Profile from "../pages/Profile";
 import PostDetail from "../pages/PostDetail";
 import CreatePost from "../pages/CreatePost";
-import Feed from "../pages/Feed"; 
+import Feed from "../pages/Feed";
 import ProtectedRoute from "../components/ProtectedRoute";
 
 function AppRoutes() {
   return (
     <Routes>
-<<<<<<< HEAD
-=======
       {/* --- Rutas Públicas --- */}
->>>>>>> santi
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
@@ -30,7 +27,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      
+
       <Route
         path="/profile"
         element={

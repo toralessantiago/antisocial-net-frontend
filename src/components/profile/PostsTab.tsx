@@ -1,4 +1,4 @@
-import PostCard from "./PostCard";
+import PostCard from "./PostCardProfile";
 import type { Post, Comment } from "../../types/profile";
 
 interface Props {

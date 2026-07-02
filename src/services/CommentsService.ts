@@ -1,27 +1,26 @@
-import api from "./api";
+import { API_URL } from "./api";
+
+const USERS_URL = `${API_URL}/users`;
+const COMMENTS_URL = `${API_URL}/comments`;
 
 export const getCommentsByUser = async (userId: string) => {
-  try {
-    const response = await api.get(`/users/${userId}/comments`);
-    return response.data.data;
-  } catch (error: any) {
-    throw new Error(
-      error.response?.data?.error ||
-        error.response?.data?.message ||
-        error.message,
-    );
+  const response = await fetch(`${USERS_URL}/${userId}/comments`);
+  const json = await response.json();
+
+  if (!response.ok) {
+    throw new Error(json.error || json.message);
   }
+
+  return json.data;
 };
 
 export const getCommentsByPost = async (postId: string) => {
-  try {
-    const response = await api.get(`/comments/post/${postId}`);
-    return response.data; // este endpoint no envuelve en {data}, ya lo sabíamos de antes
-  } catch (error: any) {
-    throw new Error(
-      error.response?.data?.error ||
-        error.response?.data?.message ||
-        error.message,
-    );
+  const response = await fetch(`${COMMENTS_URL}/post/${postId}`);
+  const json = await response.json();
+
+  if (!response.ok) {
+    throw new Error(json.error || json.message);
   }
+
+  return json;
 };
