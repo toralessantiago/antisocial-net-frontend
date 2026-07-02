@@ -76,11 +76,13 @@ function PostCard({ post, user }: CardProps) {
                 <Modal.Header closeButton>
                 </Modal.Header>
                 <Modal.Body className="text-center p-0">
-                    <img
-                        src={post.images[0].url}
-                        alt="Imagen expandida"
-                        style={{ width: '100%', height: 'auto' }}>
-                    </img>
+                    {post.images && post.images.length > 0 && (
+                        <img
+                            src={post.images[0].url}
+                            alt="Imagen expandida"
+                            style={{ width: '100%', height: 'auto' }}>
+                        </img>
+                    )}
                 </Modal.Body>
             </Modal>
         </Card>

@@ -15,7 +15,7 @@ export async function obtenerPosts(): Promise<Post[]> {
 }
 
 export async function obtenerPostPorId(id: string | number): Promise<Post> {
-    const respuesta = await fetch(`http://localhost:3000/api/post/${id}`);
+    const respuesta = await fetch(`${API_URL}/${id}`);
 
     if (!respuesta.ok) {
         throw new Error("No se pudo obtener el post");
@@ -29,12 +29,20 @@ export async function obtenerPostPorId(id: string | number): Promise<Post> {
 export async function obtenerImagenesDePost(id: string | number): Promise<string[]> {
     const respuesta = await fetch(`http://localhost:3001/api/postimages/post/${id}`);
 
+
     if (!respuesta.ok) {
         throw new Error("No se pudieron obtener las imagenes");
     }
 
-    const data: { url: string; _id: string }[] = await respuesta.json();
+    const respuestaJson = await respuesta.json();
+    const rawData = respuestaJson.data ?? respuestaJson;
 
+    if (!Array.isArray(rawData)) {
+        console.error("Respuesta inesperada de /api/users, no es un array:", JSON.stringify(respuestaJson, null, 2));
+        return [];
+    }
+
+    const data: { url: string; _id: string }[] = rawData;
     const imagenes: string[] = data.map(img => img.url);
 
     return imagenes;

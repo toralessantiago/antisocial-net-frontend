@@ -21,7 +21,7 @@ export function CommentList({ postId }: CommentListProps) {
     useEffect(() => {
         async function cargarComentarios() {
             try {
-                
+
                 const [comentariosObtenidos, usuariosObtenidos] = await Promise.all([
                     obtenerComentarios(postId),
                     obtenerUsuarios()
@@ -59,16 +59,18 @@ export function CommentList({ postId }: CommentListProps) {
 
     return (
         <Container className="my-5">
-            <h1 className="mb-4">Home</h1>
 
             <Row className="justify-content-center">
                 {comments.map((comment) => {
-                    const autorComment = usuarios.find(u => u.id === comment.userId) || {
-                        id: comment.userId,
-                        nickname: "Usuario desconocido"
-                    }
+                    const userId = comment.userId;
+                    const autorComment = usuarios.find(u => String(u._id) === String(userId)) || {
+                        _id: userId ?? "desconocido",
+                        fullname: "",
+                        nickname: "Usuario desconocido",
+                        email: ""
+                    };
                     return (
-                        <Col key={comment.id} xs={12} className="mb-4">
+                        <Col key={comment._id} xs={12} className="mb-4">
                             <CommentCard comment={comment} user={autorComment} />
                         </Col>
                     )

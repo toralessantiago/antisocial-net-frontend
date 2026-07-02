@@ -1,6 +1,9 @@
 export type User = {
-  id: number | string;
+  _id: string;
+  fullname: string;
   nickname: string;
+  email: string;
+  birthDate?: string;
 }
 
 export const users = [
