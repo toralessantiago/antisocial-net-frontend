@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { UserContext } from "../context/UserContext";
 import logoImg from "../assets/logo.webp";
+import "../styles/layout/navbar.css";
 
 function Navbar() {
   const { user, logout } = useContext(UserContext);
@@ -28,7 +29,11 @@ function Navbar() {
             src={logoImg}
             alt="Logo"
             height="40"
-            style={{ display: "block", objectFit: "contain" }}
+            style={{
+              display: "block",
+              objectFit: "contain",
+              filter: theme === "dark" ? "invert(1)" : "none",
+            }}
           />
           <span>Anti-Social</span>
         </NavLink>
@@ -62,7 +67,10 @@ function Navbar() {
               >
                 Mi Perfil
               </NavLink>
-              <button className="navbar-link navbar-btn-logout" onClick={logout}>
+              <button
+                className="navbar-link navbar-btn-logout"
+                onClick={logout}
+              >
                 Salir
               </button>
             </>
@@ -87,7 +95,11 @@ function Navbar() {
             </>
           )}
 
-          <button className="navbar-theme-btn" onClick={toggleTheme} title="Cambiar tema">
+          <button
+            className="navbar-theme-btn"
+            onClick={toggleTheme}
+            title="Cambiar tema"
+          >
             {theme === "dark" ? <FaSun size={16} /> : <FaMoon size={16} />}
           </button>
         </div>
@@ -97,7 +109,3 @@ function Navbar() {
 }
 
 export default Navbar;
-
-
-
-

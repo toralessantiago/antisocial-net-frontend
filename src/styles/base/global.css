@@ -2,8 +2,13 @@ html,
 body,
 #root {
   height: 100%;
-  margin: 0;
   padding-top: 20px;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
 }
 
 body {
@@ -15,6 +20,12 @@ body {
 /* textos globales */
 h1, h2, h3, p, span, label {
   color: var(--text);
+}
+
+#root {
+  margin: 0;
+  padding: 0;
+  max-width: 100%;
 }
 
 /* ================= TRANSICIÓN GLOBAL DE TEMA OSCURO / CLAR0 ================= */

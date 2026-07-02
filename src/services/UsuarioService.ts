@@ -19,7 +19,7 @@ export async function obtenerUsuarios(): Promise<User[]> {
 }
 
 export async function obtenerUserPorId(id: string): Promise<User> {
-    const respuesta = await fetch(`http://localhost:3000/users/${id}`);
+    const respuesta = await fetch(`${API_URL}/users/${id}`);
 
     if (!respuesta.ok) {
         throw new Error("No se pudo obtener el user");

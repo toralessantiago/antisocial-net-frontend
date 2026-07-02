@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { UserContext } from "../context/UserContext";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const API_URL = "http://localhost:3000/api";
 
 interface CommentFormProps {
   postId: string;
@@ -30,7 +30,7 @@ function CommentForm({ postId, onCommentAdded }: CommentFormProps) {
         },
         body: JSON.stringify({
           content: content.trim(),
-          user: user._id,
+          user: user.id,
           post: postId,
         }),
       });
