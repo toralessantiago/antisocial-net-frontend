@@ -89,3 +89,17 @@
     gap: 0.75rem !important;
   }
 }
+
+button.navbar-link {
+  background: none;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none; 
+}
+
+button.navbar-link:hover,
+button.navbar-link.active {
+  color: var(--nav-hover);
+  border-bottom: 2px solid #198754; 
+}

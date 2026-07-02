@@ -1,18 +1,14 @@
 import { useEffect, useState } from "react";
 import Navbar from "./components/Navbar"; 
+import Footer from "./components/Footer"; // 1. Importa tu componente Footer
 import AppRoutes from "./routes/AppRoutes";
 import "./styles/layout/navbar.css";
 import "./styles/layout/footer.css";
-import { FaMoon, FaSun } from "react-icons/fa";
 
 function App() {
   const [theme, setTheme] = useState<"light" | "dark">(() => {
     const saved = localStorage.getItem("theme");
-
-    if (saved === "light" || saved === "dark") {
-      return saved;
-    }
-
+    if (saved === "light" || saved === "dark") return saved;
     return "light";
   });
 
@@ -21,15 +17,18 @@ function App() {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
-  };
-
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      
       <Navbar />
-      <AppRoutes />
-    </>
+
+      <main style={{ flex: 1 }}>
+        <AppRoutes />
+      </main>
+
+      <Footer />
+      
+    </div>
   );
 }
 
