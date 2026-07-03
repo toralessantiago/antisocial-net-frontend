@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Navbar from "./components/Navbar"; 
-import Footer from "./components/Footer"; // 1. Importa tu componente Footer
+import Footer from "./components/Footer"; 
 import AppRoutes from "./routes/AppRoutes";
 import "./styles/layout/navbar.css";
 import "./styles/layout/footer.css";

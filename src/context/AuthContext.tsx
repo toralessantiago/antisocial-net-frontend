@@ -9,7 +9,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   login: (userData: User) => void;
-  logout: () => Promise<void>; // Actualizado a Promise para soportar async/await
+  logout: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -32,16 +32,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
-      // 1. Llamada a la API para destruir la sesión real en el servidor.
-      // IMPORTANTE: Asegúrate de que esta URL sea la correcta para tu backend.
       await fetch('http://localhost:3000/api/logout', { 
         method: 'POST',
-        credentials: 'include', // Obligatorio para que el navegador envíe y borre la cookie de sesión
+        credentials: 'include', 
       });
     } catch (error) {
       console.error("Error al intentar cerrar sesión en el servidor:", error);
     } finally {
-      // 2. Limpieza local (se ejecuta siempre, aunque el servidor falle o esté caído)
       localStorage.removeItem('user');
       setUser(null);
     }

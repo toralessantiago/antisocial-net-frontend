@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Container, Row, Col, Spinner, Alert } from "react-bootstrap";
+import { Container, Spinner, Alert } from "react-bootstrap";
 
 import PostCard from "./PostCard";
 import { obtenerPosts } from "../services/PostService";
@@ -21,11 +21,12 @@ export function PostList() {
           obtenerUsuarios(),
         ]);
 
-        const postsOrdenados = [...postsObtenidos].sort((a, b) => 
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        const postsOrdenados = [...postsObtenidos].sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
         );
 
-        setPosts(postsOrdenados); 
+        setPosts(postsOrdenados);
         setUsuarios(usuariosObtenidos);
       } catch {
         setError("Ocurrió un error al cargar los posts.");
@@ -55,34 +56,32 @@ export function PostList() {
   }
 
   return (
-    <Container fluid className="py-4">
-  <Row className="justify-content-center">
-    <Col xs={12} md={8} lg={6} xl={5}>
+    <Container fluid className="py-4 px-0">
       <h2 className="text-center mb-4">Inicio</h2>
 
-      {posts.map((post) => {
-        const userId =
-          typeof post.user === "object" ? post.user._id : post.user;
+      <div className="w-100 d-flex flex-column align-items-center">
+        {posts.map((post) => {
+          const userId =
+            typeof post.user === "object" ? post.user._id : post.user;
 
-        const autorPost =
-          usuarios.find((u) => u._id === userId || u.id === userId) ??
-          ({
-            _id: userId,
-            id: userId,
-            fullname: "",
-            nickname: "Usuario desconocido",
-            email: "",
-            birthDate: "",
-          } as User);
+          const autorPost =
+            usuarios.find((u) => u._id === userId || u.id === userId) ??
+            ({
+              _id: userId,
+              id: userId,
+              fullname: "",
+              nickname: "Usuario desconocido",
+              email: "",
+              birthDate: "",
+            } as User);
 
-        return (
-          <div key={post._id} className="mb-4">
-            <PostCard post={post} user={autorPost} />
-          </div>
-        );
-      })}
-    </Col>
-  </Row>
-</Container>
+          return (
+            <div key={post._id} className="w-100">
+              <PostCard post={post} user={autorPost} />
+            </div>
+          );
+        })}
+      </div>
+    </Container>
   );
 }

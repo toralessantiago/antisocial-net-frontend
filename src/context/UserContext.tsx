@@ -1,41 +1,69 @@
 import { createContext, useState, useEffect } from "react";
+import { obtenerUserPorId } from "../services/UsuarioService";
 
 export const UserContext = createContext<any>(null);
 
 export const AuthProvider = ({ children }: any) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<any>(null);
+  const [cargandoCtx, setCargandoCtx] = useState(true);
 
   useEffect(() => {
-  const savedUser = localStorage.getItem("user");
+    async function verificarSesion() {
+      const savedUser = localStorage.getItem("user");
 
-  if (!savedUser || savedUser === "undefined") {
-    return;
-  }
+      if (!savedUser || savedUser === "undefined") {
+        setCargandoCtx(false);
+        return;
+      }
 
-  try {
-    setUser(JSON.parse(savedUser));
-  } catch (error) {
-    console.error("Usuario inválido en localStorage:", error);
-    localStorage.removeItem("user");
-  }
-}, []);
+      try {
+        const localData = JSON.parse(savedUser);
+        const idUsuario = localData.id || localData._id;
+
+        if (idUsuario) {
+          const datosActualizados = await obtenerUserPorId(idUsuario);
+
+          const userNormalizado = {
+            ...datosActualizados,
+            id: datosActualizados._id || datosActualizados.id,
+          };
+
+          setUser(userNormalizado);
+          localStorage.setItem("user", JSON.stringify(userNormalizado));
+        }
+      } catch (error) {
+        console.error("Error al refrescar usuario desde la BD:", error);
+        localStorage.removeItem("user");
+        setUser(null);
+      } finally {
+        setCargandoCtx(false);
+      }
+    }
+
+    verificarSesion();
+  }, []);
 
   const login = (userData: any) => {
-    setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData));
+    const userNormalizado = { ...userData, id: userData._id || userData.id };
+    setUser(userNormalizado);
+    localStorage.setItem("user", JSON.stringify(userNormalizado));
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
   };
+
   const updateCurrentUser = (userData: any) => {
-  setUser(userData);
-  localStorage.setItem("user", JSON.stringify(userData));
-};
+    const userNormalizado = { ...userData, id: userData._id || userData.id };
+    setUser(userNormalizado);
+    localStorage.setItem("user", JSON.stringify(userNormalizado));
+  };
 
   return (
-    <UserContext.Provider value={{ user, login, logout, updateCurrentUser }}>
+    <UserContext.Provider
+      value={{ user, login, logout, updateCurrentUser, cargandoCtx }}
+    >
       {children}
     </UserContext.Provider>
   );

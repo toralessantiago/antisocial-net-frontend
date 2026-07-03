@@ -3,8 +3,8 @@ import { PostList } from "../components/PostList";
 
 function Feed() {
   return (
-    <Container className="mt-4">
-  
+    <Container fluid="lg" className="px-0">
+      {" "}
       <PostList />
     </Container>
   );
