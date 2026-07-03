@@ -10,6 +10,10 @@
   margin-bottom: 24px !important;
 }
 
+[data-bs-theme="dark"] .post-card-twitter {
+  background-color: #000000 !important; 
+  border: 1px solid var(--border) !important; 
+}
 .post-card-body {
   padding: 16px 20px !important;
 }

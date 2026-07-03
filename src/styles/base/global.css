@@ -17,6 +17,8 @@ body {
   font-family: system-ui, sans-serif;
   background-color: var(--bg);
   color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* textos globales */
@@ -30,21 +32,25 @@ h1, h2, h3, p, span, label {
   max-width: 100%;
 }
 
-/* ================= TRANSICIÓN GLOBAL DE TEMA OSCURO / CLAR0 ================= */
-
-
+/* ================= TRANSICIÓN GLOBAL SINCRONIZADA ================= */
+*, 
+*::before, 
+*::after,
 body, 
+.navbar-container, 
+.navbar-content,
+.card, 
+.post-card-twitter,
 .register-layout,
 .register-left,
 .register-right,
 .form-control,
 .custom-select-dropdown,
-.custom-select-item,
-h1, h2, h3, h4, h5, h6, p, span, a, label, button, svg {
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-body {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.custom-select-item {
+  transition: background-color 0.3s ease-in-out, 
+              background 0.3s ease-in-out, 
+              border-color 0.3s ease-in-out, 
+              box-shadow 0.3s ease-in-out,
+              color 0.15s ease-in-out, 
+              fill 0.15s ease-in-out !important;
 }

@@ -1,20 +1,11 @@
 :root {
   --bg: #ffffff;
   --text: #0f1419;
-  --muted: #536471;
+  --muted: #95b0c5;
 
   --accent: #1f8f5f;
   --border: #cfd9de;
 }
-
-/*[data-bs-theme="dark"] {
-  --bg: #000000;
-  --text: #e7e9ea;
-  --muted: #71767b;
-
-  --accent: #1f8f5f;
-  --border: #2f3336;
-}*/
 
 [data-bs-theme="dark"] {
   --bg: #010202;
@@ -23,4 +14,33 @@
 
   --accent: #1f8f5f;
   --border: #30363d;
+}
+
+:root {
+  --bg: #ffffff;
+  --text: #0f1419;
+  --muted: #95b0c5;
+  --accent: #1f8f5f;
+  --border: #cfd9de;
+}
+
+[data-bs-theme="dark"] {
+  --bg: #010202;
+  --text: #f2f3f5;
+  --muted: #9aa4af;
+  --accent: #1f8f5f;
+  --border: #30363d;
+}
+
+.btn-custom-follow,
+[data-bs-theme="light"] .btn-custom-follow,
+[data-bs-theme="dark"] .btn-custom-follow {
+  --bs-btn-color: #ffffff !important;
+  --bs-btn-hover-color: #ffffff !important;
+  --bs-btn-active-color: #ffffff !important;
+  color: #ffffff !important;
+}
+
+.btn-custom-follow svg {
+  fill: #ffffff !important;
 }

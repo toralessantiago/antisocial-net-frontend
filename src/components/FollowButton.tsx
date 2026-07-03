@@ -3,6 +3,7 @@ import { UserContext } from "../context/UserContext";
 import { followUser, unfollowUser } from "../services/UsuarioService";
 import { Button } from "react-bootstrap";
 import { BsPersonPlus, BsPersonCheckFill } from "react-icons/bs";
+import "../styles/base/variables.css";
 
 type FollowButtonProps = {
   targetUserId: string;
@@ -52,22 +53,26 @@ export function FollowButton({ targetUserId }: FollowButtonProps) {
   const miId = currentUser?.id || currentUser?._id;
   if (String(miId) === String(targetUserId)) return null;
 
-  return (
+ return (
     <Button
-      variant={isFollowing ? "outline-secondary" : "primary"}
+      className="d-inline-flex align-items-center gap-1 rounded-pill px-3"
       size="sm"
       onClick={handleFollowToggle}
-      className="d-inline-flex align-items-center gap-1 rounded-pill px-3"
+      style={{
+        backgroundColor: isFollowing ? "var(--muted)" : "var(--accent)",
+        border: "none",
+        color: "#ffffff" 
+      }}
     >
       {isFollowing ? (
         <>
-          <BsPersonCheckFill size={16} />
-          <span>Siguiendo</span>
+          <BsPersonCheckFill size={16} color="#ffffff" />
+          <span style={{ color: "#ffffff", fontWeight: "500" }}>Siguiendo</span>
         </>
       ) : (
         <>
-          <BsPersonPlus size={16} />
-          <span>Seguir</span>
+          <BsPersonPlus size={16} color="#ffffff" />
+          <span style={{ color: "#ffffff", fontWeight: "500" }}>Seguir</span>
         </>
       )}
     </Button>
