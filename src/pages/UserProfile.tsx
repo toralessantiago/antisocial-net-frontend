@@ -35,7 +35,7 @@ function UserProfile() {
   const [showFollowersModal, setShowFollowersModal] = useState(false);
   const [showFollowingModal, setShowFollowingModal] = useState(false);
 
-  const avatars = [avatar1, avatar2, avatar3, avatar4];
+ // const avatars = [avatar1, avatar2, avatar3, avatar4];
   const [selectedAvatar] = useState(avatar1);
 
   const reloadProfile = useCallback(async () => {

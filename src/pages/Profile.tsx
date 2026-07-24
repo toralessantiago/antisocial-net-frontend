@@ -18,11 +18,15 @@ import avatar2 from "../assets/avatar-2.png";
 import avatar3 from "../assets/avatar-3.png";
 import avatar4 from "../assets/avatar-4.png";
 
-import ProfileHeader from "../components/profile/ProfileHeader"; 
+import ProfileHeader from "../components/profile/ProfileHeader";
 
 function Profile() {
-  const { user: currentUser, logout, updateCurrentUser, refreshCurrentUser } =
-    useContext(UserContext)!;
+  const {
+    user: currentUser,
+    logout,
+    updateCurrentUser,
+    refreshCurrentUser,
+  } = useContext(UserContext)!;
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<"posts" | "comments">("posts");
@@ -38,7 +42,7 @@ function Profile() {
 
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  
+
   // Nuevos estados para listas de seguidores/seguidos
   const [showFollowersModal, setShowFollowersModal] = useState(false);
   const [showFollowingModal, setShowFollowingModal] = useState(false);
@@ -46,7 +50,7 @@ function Profile() {
   const [editFormData, setEditFormData] = useState({
     fullname: currentUser?.fullname || "",
     bio: currentUser?.bio || "",
-    location: currentUser?.location || ""
+    location: currentUser?.location || "",
   });
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -59,15 +63,16 @@ function Profile() {
       if (!currentUser) return;
       try {
         setCargando(true);
-        const userId = currentUser.id || currentUser._id;
-        
+        const userId = currentUser.id || currentUser._id || ""; // Añadimos || ""
+
         const [posts, comments] = await Promise.all([
           obtenerPostsPorUsuario(userId),
-          obtenerComentariosPorUsuario(userId).catch(() => []) 
+          obtenerComentariosPorUsuario(userId).catch(() => []),
         ]);
 
-        const postsOrdenados = [...posts].sort((a, b) => 
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        const postsOrdenados = [...posts].sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
         );
 
         setMisPosts(postsOrdenados);
@@ -81,22 +86,24 @@ function Profile() {
     cargarDatos();
   }, [currentUser]);
 
-  const handleLogout = () => { 
-    logout(); 
-    navigate("/login"); 
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
   };
 
   const handleGuardarCambios = async () => {
+    if (!currentUser) return; // Línea de seguridad
+
     setIsUpdating(true);
     try {
-      const userId = currentUser.id || currentUser._id;
+      const userId = currentUser.id || currentUser._id || "";
       const respuesta = await updateUser(userId, editFormData);
-      
+
       const usuarioActualizado = {
         ...currentUser,
-        ...respuesta.data
-      }; 
-      
+        ...respuesta.data,
+      };
+
       updateCurrentUser(usuarioActualizado);
       setShowModal(false);
     } catch (error) {
@@ -106,19 +113,22 @@ function Profile() {
     }
   };
 
-  if (!currentUser) return <div className="text-center mt-5">Cargando perfil...</div>;
+  if (!currentUser)
+    return <div className="text-center mt-5">Cargando perfil...</div>;
 
   return (
     <div className="container profile-page mt-4">
       <div className="profile-topbar">
-        <Link to="/" className="back-button"><LuArrowLeft size={22} /></Link>
+        <Link to="/" className="back-button">
+          <LuArrowLeft size={22} />
+        </Link>
         <div className="text-center">
           <h5 className="mb-0">@{currentUser.nickname}</h5>
           <small className="text-muted">{misPosts.length} publicaciones</small>
         </div>
       </div>
 
-      <ProfileHeader 
+      <ProfileHeader
         user={currentUser}
         posts={misPosts}
         selectedAvatar={selectedAvatar}
@@ -131,44 +141,71 @@ function Profile() {
 
       <ul className="nav nav-tabs profile-tabs mb-4 justify-content-center">
         <li className="nav-item">
-          <button className={`nav-link ${activeTab === "posts" ? "active" : ""}`} onClick={() => setActiveTab("posts")}>
+          <button
+            className={`nav-link ${activeTab === "posts" ? "active" : ""}`}
+            onClick={() => setActiveTab("posts")}
+          >
             Publicaciones
           </button>
         </li>
         <li className="nav-item">
-          <button className={`nav-link ${activeTab === "comments" ? "active" : ""}`} onClick={() => setActiveTab("comments")}>
+          <button
+            className={`nav-link ${activeTab === "comments" ? "active" : ""}`}
+            onClick={() => setActiveTab("comments")}
+          >
             Comentarios
           </button>
         </li>
       </ul>
 
-      {cargando ? <div className="text-center py-5">Cargando...</div> : (
-        activeTab === "posts" ? (
-          misPosts.length === 0 ? <p className="text-center">No hay publicaciones.</p> : misPosts.map(post => (
+      {cargando ? (
+        <div className="text-center py-5">Cargando...</div>
+      ) : activeTab === "posts" ? (
+        misPosts.length === 0 ? (
+          <p className="text-center">No hay publicaciones.</p>
+        ) : (
+          misPosts.map((post) => (
             <div key={post._id} className="card shadow-sm mb-3">
               <div className="card-body">
                 <p>{post.description}</p>
-                <Link to={`/post/${post._id}`} className="btn btn-primary btn-sm">Ver más</Link>
-              </div>
-            </div>
-          ))
-        ) : (
-          misComentarios.length === 0 ? <p className="text-center">No has hecho comentarios aún.</p> : misComentarios.map(c => (
-            <div key={c._id} className="card shadow-sm mb-3">
-              <div className="card-body">
-                <p className="mb-1"><em>"{c.content}"</em></p>
-                {/* BOTÓN VERDE APLICADO AQUÍ */}
-                <Link to={`/post/${typeof c.post === 'string' ? c.post : c.post?._id}`} className="btn btn-outline-success btn-sm mt-2">
-                  Ver publicación
+                <Link
+                  to={`/post/${post._id}`}
+                  className="btn btn-primary btn-sm"
+                >
+                  Ver más
                 </Link>
               </div>
             </div>
           ))
         )
+      ) : misComentarios.length === 0 ? (
+        <p className="text-center">No has hecho comentarios aún.</p>
+      ) : (
+        misComentarios.map((c) => (
+          <div key={c._id} className="card shadow-sm mb-3">
+            <div className="card-body">
+              <p className="mb-1">
+                <em>"{c.content}"</em>
+              </p>
+              {/* BOTÓN VERDE APLICADO AQUÍ */}
+              <Link
+                to={`/post/${typeof c.post === "string" ? c.post : c.post?._id}`}
+                className="btn btn-outline-success btn-sm mt-2"
+              >
+                Ver publicación
+              </Link>
+            </div>
+          </div>
+        ))
       )}
 
       {/* MODAL: SEGUIDORES */}
-      <Modal show={showFollowersModal} onHide={() => setShowFollowersModal(false)} centered scrollable>
+      <Modal
+        show={showFollowersModal}
+        onHide={() => setShowFollowersModal(false)}
+        centered
+        scrollable
+      >
         <Modal.Header closeButton>
           <Modal.Title>Seguidores</Modal.Title>
         </Modal.Header>
@@ -178,27 +215,54 @@ function Profile() {
               {currentUser.followers.map((follower: unknown, idx: number) => {
                 const entry = normalizeFollowEntry(follower);
                 return (
-                <ListGroup.Item key={entry.id || idx} className="d-flex align-items-center gap-2 px-0 border-bottom-0 mb-2">
-                  <div className="bg-secondary text-white rounded-circle d-flex justify-content-center align-items-center" style={{width: "40px", height: "40px"}}>
-                    {entry.nickname ? entry.nickname.charAt(0).toUpperCase() : "?"}
-                  </div>
-                  <div className="flex-grow-1">
-                    <Link to={`/users/${entry.id}`} className="text-decoration-none text-body" onClick={() => setShowFollowersModal(false)}>
-                      <strong className="d-block">{entry.fullname || "Usuario"}</strong>
-                      <span className="text-muted" style={{fontSize: "14px"}}>@{entry.nickname || "usuario"}</span>
-                    </Link>
-                  </div>
-                </ListGroup.Item>
-              );})}
+                  <ListGroup.Item
+                    key={entry.id || idx}
+                    className="d-flex align-items-center gap-2 px-0 border-bottom-0 mb-2"
+                  >
+                    <div
+                      className="bg-secondary text-white rounded-circle d-flex justify-content-center align-items-center"
+                      style={{ width: "40px", height: "40px" }}
+                    >
+                      {entry.nickname
+                        ? entry.nickname.charAt(0).toUpperCase()
+                        : "?"}
+                    </div>
+                    <div className="flex-grow-1">
+                      <Link
+                        to={`/users/${entry.id}`}
+                        className="text-decoration-none text-body"
+                        onClick={() => setShowFollowersModal(false)}
+                      >
+                        <strong className="d-block">
+                          {entry.fullname || "Usuario"}
+                        </strong>
+                        <span
+                          className="text-muted"
+                          style={{ fontSize: "14px" }}
+                        >
+                          @{entry.nickname || "usuario"}
+                        </span>
+                      </Link>
+                    </div>
+                  </ListGroup.Item>
+                );
+              })}
             </ListGroup>
           ) : (
-            <p className="text-muted text-center my-3">Aún no tenés seguidores.</p>
+            <p className="text-muted text-center my-3">
+              Aún no tenés seguidores.
+            </p>
           )}
         </Modal.Body>
       </Modal>
 
       {/* MODAL: SEGUIDOS */}
-      <Modal show={showFollowingModal} onHide={() => setShowFollowingModal(false)} centered scrollable>
+      <Modal
+        show={showFollowingModal}
+        onHide={() => setShowFollowingModal(false)}
+        centered
+        scrollable
+      >
         <Modal.Header closeButton>
           <Modal.Title>Siguiendo</Modal.Title>
         </Modal.Header>
@@ -208,55 +272,132 @@ function Profile() {
               {currentUser.following.map((followed: unknown, idx: number) => {
                 const entry = normalizeFollowEntry(followed);
                 return (
-                <ListGroup.Item key={entry.id || idx} className="d-flex align-items-center gap-2 px-0 border-bottom-0 mb-2">
-                  <div className="bg-secondary text-white rounded-circle d-flex justify-content-center align-items-center" style={{width: "40px", height: "40px"}}>
-                    {entry.nickname ? entry.nickname.charAt(0).toUpperCase() : "?"}
-                  </div>
-                  <div className="flex-grow-1">
-                    <Link to={`/users/${entry.id}`} className="text-decoration-none text-body" onClick={() => setShowFollowingModal(false)}>
-                      <strong className="d-block">{entry.fullname || "Usuario"}</strong>
-                      <span className="text-muted" style={{fontSize: "14px"}}>@{entry.nickname || "usuario"}</span>
-                    </Link>
-                  </div>
-                </ListGroup.Item>
-              );})}
+                  <ListGroup.Item
+                    key={entry.id || idx}
+                    className="d-flex align-items-center gap-2 px-0 border-bottom-0 mb-2"
+                  >
+                    <div
+                      className="bg-secondary text-white rounded-circle d-flex justify-content-center align-items-center"
+                      style={{ width: "40px", height: "40px" }}
+                    >
+                      {entry.nickname
+                        ? entry.nickname.charAt(0).toUpperCase()
+                        : "?"}
+                    </div>
+                    <div className="flex-grow-1">
+                      <Link
+                        to={`/users/${entry.id}`}
+                        className="text-decoration-none text-body"
+                        onClick={() => setShowFollowingModal(false)}
+                      >
+                        <strong className="d-block">
+                          {entry.fullname || "Usuario"}
+                        </strong>
+                        <span
+                          className="text-muted"
+                          style={{ fontSize: "14px" }}
+                        >
+                          @{entry.nickname || "usuario"}
+                        </span>
+                      </Link>
+                    </div>
+                  </ListGroup.Item>
+                );
+              })}
             </ListGroup>
           ) : (
-            <p className="text-muted text-center my-3">No seguís a nadie todavía.</p>
+            <p className="text-muted text-center my-3">
+              No seguís a nadie todavía.
+            </p>
           )}
         </Modal.Body>
       </Modal>
 
       {/* MODAL: EDITAR PERFIL */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-        <Modal.Header closeButton><Modal.Title>Editar Perfil</Modal.Title></Modal.Header>
+        <Modal.Header closeButton>
+          <Modal.Title>Editar Perfil</Modal.Title>
+        </Modal.Header>
         <Modal.Body>
           <Form>
             <Form.Group className="mb-3">
               <Form.Label>Nombre completo</Form.Label>
-              <Form.Control type="text" value={editFormData.fullname} onChange={(e) => setEditFormData({...editFormData, fullname: e.target.value})} />
+              <Form.Control
+                type="text"
+                value={editFormData.fullname}
+                onChange={(e) =>
+                  setEditFormData({ ...editFormData, fullname: e.target.value })
+                }
+              />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Biografía</Form.Label>
-              <Form.Control as="textarea" rows={3} value={editFormData.bio} onChange={(e) => setEditFormData({...editFormData, bio: e.target.value})} />
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={editFormData.bio}
+                onChange={(e) =>
+                  setEditFormData({ ...editFormData, bio: e.target.value })
+                }
+              />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Ubicación</Form.Label>
-              <Form.Control type="text" value={editFormData.location} onChange={(e) => setEditFormData({...editFormData, location: e.target.value})} />
+              <Form.Control
+                type="text"
+                value={editFormData.location}
+                onChange={(e) =>
+                  setEditFormData({ ...editFormData, location: e.target.value })
+                }
+              />
             </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)} disabled={isUpdating}>Cancelar</Button>
-          <Button variant="primary" onClick={handleGuardarCambios} disabled={isUpdating}>{isUpdating ? "Guardando..." : "Guardar cambios"}</Button>
+          <Button
+            variant="secondary"
+            onClick={() => setShowModal(false)}
+            disabled={isUpdating}
+          >
+            Cancelar
+          </Button>
+          <Button
+            variant="primary"
+            onClick={handleGuardarCambios}
+            disabled={isUpdating}
+          >
+            {isUpdating ? "Guardando..." : "Guardar cambios"}
+          </Button>
         </Modal.Footer>
       </Modal>
 
-      <Modal show={showAvatarModal} onHide={() => setShowAvatarModal(false)} centered>
-        <Modal.Header closeButton><Modal.Title>Seleccionar Avatar</Modal.Title></Modal.Header>
+      <Modal
+        show={showAvatarModal}
+        onHide={() => setShowAvatarModal(false)}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Seleccionar Avatar</Modal.Title>
+        </Modal.Header>
         <Modal.Body className="d-flex justify-content-center gap-3">
           {avatars.map((av, index) => (
-            <img key={index} src={av} alt={`Avatar ${index + 1}`} style={{ width: "60px", cursor: "pointer", border: selectedAvatar === av ? "3px solid var(--accent)" : "none", borderRadius: "50%" }} onClick={() => { setSelectedAvatar(av); localStorage.setItem("avatar", index.toString()); setShowAvatarModal(false); }} />
+            <img
+              key={index}
+              src={av}
+              alt={`Avatar ${index + 1}`}
+              style={{
+                width: "60px",
+                cursor: "pointer",
+                border:
+                  selectedAvatar === av ? "3px solid var(--accent)" : "none",
+                borderRadius: "50%",
+              }}
+              onClick={() => {
+                setSelectedAvatar(av);
+                localStorage.setItem("avatar", index.toString());
+                setShowAvatarModal(false);
+              }}
+            />
           ))}
         </Modal.Body>
       </Modal>
