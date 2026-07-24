@@ -6,7 +6,7 @@ import "./styles/layout/navbar.css";
 import "./styles/layout/footer.css";
 
 function App() {
-  const [theme, setTheme] = useState<"light" | "dark">(() => {
+  const [theme] = useState<"light" | "dark">(() => {
     const saved = localStorage.getItem("theme");
     if (saved === "light" || saved === "dark") return saved;
     return "light";

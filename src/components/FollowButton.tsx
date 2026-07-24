@@ -3,21 +3,27 @@ import { UserContext } from "../context/UserContext";
 import { followUser, unfollowUser } from "../services/UsuarioService";
 import { Button } from "react-bootstrap";
 import { BsPersonPlus, BsPersonCheckFill } from "react-icons/bs";
+import { getUserId, isFollowingUser } from "../utils/userHelpers";
 import "../styles/base/variables.css";
 
 type FollowButtonProps = {
   targetUserId: string;
+  onFollowChange?: (following: boolean) => void;
 };
 
-export function FollowButton({ targetUserId }: FollowButtonProps) {
-  const { user: currentUser, updateCurrentUser } = useContext(UserContext);
+export function FollowButton({ targetUserId, onFollowChange }: FollowButtonProps) {
+  const ctx = useContext(UserContext);
+  const currentUser = ctx?.user;
+  const refreshCurrentUser = ctx?.refreshCurrentUser;
 
-  const [isFollowing, setIsFollowing] = useState<boolean>(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (currentUser && currentUser.following) {
-      const yaLoSigo = currentUser.following.includes(targetUserId);
-      setIsFollowing(yaLoSigo);
+    if (currentUser) {
+      setIsFollowing(
+        isFollowingUser(currentUser.following as unknown[] | undefined, targetUserId),
+      );
     }
   }, [currentUser, targetUserId]);
 
@@ -29,39 +35,43 @@ export function FollowButton({ targetUserId }: FollowButtonProps) {
       return;
     }
 
-    const previousFollowing = [...(currentUser.following || [])];
+    const myId = getUserId(currentUser as { id?: string; _id?: string });
+    if (!myId) return;
 
-    const optimisticFollowing = isFollowing
-      ? previousFollowing.filter((id) => id !== targetUserId)
-      : [...previousFollowing, targetUserId];
-    setIsFollowing(!isFollowing);
-    updateCurrentUser({ ...currentUser, following: optimisticFollowing });
+    const wasFollowing = isFollowing;
+    setIsFollowing(!wasFollowing);
+    setLoading(true);
 
     try {
-      if (isFollowing) {
-        await unfollowUser(currentUser.id || currentUser._id, targetUserId);
+      if (wasFollowing) {
+        await unfollowUser(myId, targetUserId);
       } else {
-        await followUser(currentUser.id || currentUser._id, targetUserId);
+        await followUser(myId, targetUserId);
       }
+      await refreshCurrentUser?.();
+      onFollowChange?.(!wasFollowing);
     } catch (error) {
       console.error("Error en la acción de seguir:", error);
-      setIsFollowing(isFollowing);
-      updateCurrentUser({ ...currentUser, following: previousFollowing });
+      setIsFollowing(wasFollowing);
+      alert("No se pudo completar la acción. Intentá de nuevo.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const miId = currentUser?.id || currentUser?._id;
-  if (String(miId) === String(targetUserId)) return null;
+  const miId = getUserId(currentUser as { id?: string; _id?: string } | null);
+  if (miId && String(miId) === String(targetUserId)) return null;
 
- return (
+  return (
     <Button
       className="d-inline-flex align-items-center gap-1 rounded-pill px-3"
       size="sm"
+      disabled={loading}
       onClick={handleFollowToggle}
       style={{
         backgroundColor: isFollowing ? "var(--muted)" : "var(--accent)",
         border: "none",
-        color: "#ffffff" 
+        color: "#ffffff",
       }}
     >
       {isFollowing ? (

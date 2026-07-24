@@ -1,4 +1,3 @@
-/* ================= ADAPTACIÓN A TUS VARIABLES GLOBALES ================= */
 .register-layout {
   display: grid;
   grid-template-columns: 1fr;
@@ -91,7 +90,6 @@
   width: 100%;
   height: 46px;
   padding: 10px 14px;
-  /* Un sutil contraste sobre el fondo transparente */
   background: color-mix(in srgb, var(--text) 4%, transparent);
   border: 1px solid var(--border);
   border-radius: 10px;

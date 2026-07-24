@@ -10,7 +10,7 @@ interface CommentListProps {
 }
 
 function CommentList({ comments, onCommentDeleted }: CommentListProps) {
-  const { user: usuarioLogueado } = useContext(UserContext);
+  const { user: usuarioLogueado } = useContext(UserContext)!;
 
   const handleDelete = async (id: string) => {
     if (!window.confirm("¿Borrar este comentario?")) return;

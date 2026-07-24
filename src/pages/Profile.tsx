@@ -8,10 +8,10 @@ import { UserContext } from "../context/UserContext";
 import { obtenerPostsPorUsuario } from "../services/PostService";
 import { obtenerComentariosPorUsuario } from "../services/CommentService";
 import { updateUser } from "../services/UsuarioService";
+import { normalizeFollowEntry } from "../utils/userHelpers";
 
 import type { Post } from "../data/Post";
 import type { Comment } from "../data/comments";
-import type { User } from "../data/users";
 
 import avatar1 from "../assets/avatar-1.png";
 import avatar2 from "../assets/avatar-2.png";
@@ -21,7 +21,8 @@ import avatar4 from "../assets/avatar-4.png";
 import ProfileHeader from "../components/profile/ProfileHeader"; 
 
 function Profile() {
-  const { user: currentUser, logout, updateCurrentUser } = useContext(UserContext);
+  const { user: currentUser, logout, updateCurrentUser, refreshCurrentUser } =
+    useContext(UserContext)!;
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<"posts" | "comments">("posts");
@@ -48,6 +49,10 @@ function Profile() {
     location: currentUser?.location || ""
   });
   const [isUpdating, setIsUpdating] = useState(false);
+
+  useEffect(() => {
+    refreshCurrentUser?.().catch(() => {});
+  }, []);
 
   useEffect(() => {
     async function cargarDatos() {
@@ -170,17 +175,21 @@ function Profile() {
         <Modal.Body>
           {currentUser.followers && currentUser.followers.length > 0 ? (
             <ListGroup variant="flush">
-              {currentUser.followers.map((follower: any, idx: number) => (
-                <ListGroup.Item key={idx} className="d-flex align-items-center gap-2 px-0 border-bottom-0 mb-2">
+              {currentUser.followers.map((follower: unknown, idx: number) => {
+                const entry = normalizeFollowEntry(follower);
+                return (
+                <ListGroup.Item key={entry.id || idx} className="d-flex align-items-center gap-2 px-0 border-bottom-0 mb-2">
                   <div className="bg-secondary text-white rounded-circle d-flex justify-content-center align-items-center" style={{width: "40px", height: "40px"}}>
-                    {follower.nickname ? follower.nickname.charAt(0).toUpperCase() : "?"}
+                    {entry.nickname ? entry.nickname.charAt(0).toUpperCase() : "?"}
                   </div>
-                  <div>
-                    <strong className="d-block">{follower.fullname || "Usuario"}</strong>
-                    <span className="text-muted" style={{fontSize: "14px"}}>@{follower.nickname || "usuario"}</span>
+                  <div className="flex-grow-1">
+                    <Link to={`/users/${entry.id}`} className="text-decoration-none text-body" onClick={() => setShowFollowersModal(false)}>
+                      <strong className="d-block">{entry.fullname || "Usuario"}</strong>
+                      <span className="text-muted" style={{fontSize: "14px"}}>@{entry.nickname || "usuario"}</span>
+                    </Link>
                   </div>
                 </ListGroup.Item>
-              ))}
+              );})}
             </ListGroup>
           ) : (
             <p className="text-muted text-center my-3">Aún no tenés seguidores.</p>
@@ -196,17 +205,21 @@ function Profile() {
         <Modal.Body>
           {currentUser.following && currentUser.following.length > 0 ? (
             <ListGroup variant="flush">
-              {currentUser.following.map((followed: any, idx: number) => (
-                <ListGroup.Item key={idx} className="d-flex align-items-center gap-2 px-0 border-bottom-0 mb-2">
+              {currentUser.following.map((followed: unknown, idx: number) => {
+                const entry = normalizeFollowEntry(followed);
+                return (
+                <ListGroup.Item key={entry.id || idx} className="d-flex align-items-center gap-2 px-0 border-bottom-0 mb-2">
                   <div className="bg-secondary text-white rounded-circle d-flex justify-content-center align-items-center" style={{width: "40px", height: "40px"}}>
-                    {followed.nickname ? followed.nickname.charAt(0).toUpperCase() : "?"}
+                    {entry.nickname ? entry.nickname.charAt(0).toUpperCase() : "?"}
                   </div>
-                  <div>
-                    <strong className="d-block">{followed.fullname || "Usuario"}</strong>
-                    <span className="text-muted" style={{fontSize: "14px"}}>@{followed.nickname || "usuario"}</span>
+                  <div className="flex-grow-1">
+                    <Link to={`/users/${entry.id}`} className="text-decoration-none text-body" onClick={() => setShowFollowingModal(false)}>
+                      <strong className="d-block">{entry.fullname || "Usuario"}</strong>
+                      <span className="text-muted" style={{fontSize: "14px"}}>@{entry.nickname || "usuario"}</span>
+                    </Link>
                   </div>
                 </ListGroup.Item>
-              ))}
+              );})}
             </ListGroup>
           ) : (
             <p className="text-muted text-center my-3">No seguís a nadie todavía.</p>

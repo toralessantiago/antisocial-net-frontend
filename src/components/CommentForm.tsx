@@ -9,7 +9,7 @@ interface CommentFormProps {
 }
 
 function CommentForm({ postId, onCommentAdded }: CommentFormProps) {
-  const { user } = useContext(UserContext);
+  const { user } = useContext(UserContext)!;
   const [content, setContent] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");

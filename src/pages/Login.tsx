@@ -4,13 +4,12 @@ import { UserContext } from "../context/UserContext";
 import { FaAt, FaEye, FaEyeSlash } from "react-icons/fa";
 import "../styles/pages/auth.css";
 
-const API_URL = "http://localhost:3000/api/users";
+const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/users`;
 
 function Login() {
-  const { user, login } = useContext(UserContext);
+  const ctx = useContext(UserContext);
   const navigate = useNavigate();
 
-  // Estados del formulario
   const [nickname, setNickName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -18,7 +17,19 @@ function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  if (!ctx) return null;
+
+  const { user, login, cargandoCtx } = ctx;
+
   // 1. Redirección automática si el usuario ya inició sesión
+  if (cargandoCtx) {
+    return (
+      <div className="text-center mt-5">
+        <p>Verificando sesión...</p>
+      </div>
+    );
+  }
+
   if (user) {
     return <Navigate to="/feed" />;
   }

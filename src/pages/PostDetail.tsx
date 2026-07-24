@@ -20,16 +20,18 @@ import CommentForm from "../components/CommentForm";
 
 import type { Post } from "../data/Post";
 import type { User } from "../data/users";
-import type { Comment } from "../data/comments";
+import type { Comment as AppComment } from "../data/comments";
+import { getUserId, isUserInLikes } from "../utils/userHelpers";
 
 function PostDetail() {
   const { id } = useParams();
-  const { user: usuarioLogueado } = useContext(UserContext);
+  const ctx = useContext(UserContext);
+  const usuarioLogueado = ctx?.user;
   const navigate = useNavigate();
 
   const [post, setPost] = useState<Post | null>(null);
   const [autor, setAutor] = useState<User | null>(null);
-  const [comentarios, setComentarios] = useState<Comment[]>([]);
+  const [comentarios, setComentarios] = useState<AppComment[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
@@ -81,9 +83,10 @@ function PostDetail() {
   useEffect(() => {
     if (post) {
       setLikesCount(post.likes?.length || 0);
-      const userId = usuarioLogueado?.id || usuarioLogueado?._id;
-
-      setIsLiked(userId ? (post.likes?.includes(userId) ?? false) : false);
+      const userId = getUserId(
+        usuarioLogueado as { id?: string; _id?: string } | null,
+      );
+      setIsLiked(isUserInLikes(post.likes, userId));
     }
   }, [post, usuarioLogueado]);
 
@@ -91,13 +94,21 @@ function PostDetail() {
   const handleLikeClick = async () => {
     if (!usuarioLogueado || !post) return;
 
-    const userId = usuarioLogueado.id || usuarioLogueado._id;
+    const userId = getUserId(
+      usuarioLogueado as { id?: string; _id?: string },
+    );
+    if (!userId) return;
 
     setIsLiked(!isLiked);
     setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
 
     try {
-      await toggleLike(post._id, userId);
+      const updated = await toggleLike(post._id, userId);
+      if (updated?.likes) {
+        setLikesCount(updated.likes.length);
+        setIsLiked(isUserInLikes(updated.likes, userId));
+        setPost((prev) => (prev ? { ...prev, likes: updated.likes } : prev));
+      }
     } catch (error) {
       console.error("Error al dar like:", error);
       setIsLiked(isLiked);
@@ -144,7 +155,7 @@ function PostDetail() {
                     : "?"}
                 </div>
                 <div
-                  onClick={() => navigate(`/users/${autor?._id}`)}
+                  onClick={() => navigate(`/users/${autor?.id || autor?._id}`)}
                   style={{ cursor: "pointer" }}
                 >
                   <span className="pd-author fw-bold">
@@ -187,7 +198,7 @@ function PostDetail() {
 
           <p className="pd-description mt-3 fs-5">{post.description}</p>
 
-          {post.images.length > 0 && (
+          {post.images && post.images.length > 0 && (
             <div className="pd-images mb-3">
               {post.images.map((img) => (
                 <img

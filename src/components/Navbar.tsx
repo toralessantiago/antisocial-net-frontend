@@ -6,7 +6,9 @@ import logoImg from "../assets/logo.webp";
 import "../styles/layout/navbar.css";
 
 function Navbar() {
-  const { user, logout } = useContext(UserContext);
+  const ctx = useContext(UserContext);
+  const user = ctx?.user;
+  const logout = ctx?.logout;
 
   const [theme, setTheme] = useState<"light" | "dark">(() => {
     return (localStorage.getItem("theme") as "light" | "dark") || "light";
@@ -43,6 +45,14 @@ function Navbar() {
           {user ? (
             <>
               <NavLink
+                to="/feed"
+                className={({ isActive }) =>
+                  `navbar-link ${isActive ? "active" : ""}`
+                }
+              >
+                Feed
+              </NavLink>
+              <NavLink
                 to="/create-post"
                 className={({ isActive }) =>
                   `navbar-link ${isActive ? "active" : ""}`
@@ -60,7 +70,7 @@ function Navbar() {
               </NavLink>
               <button
                 className="navbar-link navbar-btn-logout"
-                onClick={logout}
+                onClick={() => void logout?.()}
               >
                 Salir
               </button>

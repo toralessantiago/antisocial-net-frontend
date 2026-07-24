@@ -11,8 +11,8 @@ export interface User {
   location?: string;
   verified?: boolean;
 
-  followers?: string[];
-  following?: string[];
+  followers?: (string | Pick<User, "id" | "_id" | "nickname" | "fullname">)[];
+  following?: (string | Pick<User, "id" | "_id" | "nickname" | "fullname">)[];
 
   createdAt?: string;
 }

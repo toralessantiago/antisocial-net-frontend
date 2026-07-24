@@ -1,6 +1,5 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
-import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Profile from "../pages/Profile";
@@ -14,8 +13,8 @@ function AppRoutes() {
   return (
     <Routes>
       {/* --- Rutas Públicas --- */}
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
+     <Route path="/" element={<Login />} />
+      <Route path="/login" element={<Navigate to="/" replace />} />
       <Route path="/register" element={<Register />} />
       <Route path="/post/:id" element={<PostDetail />} />
 

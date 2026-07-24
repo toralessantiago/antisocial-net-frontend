@@ -1,5 +1,5 @@
 import { Card, Modal, Badge } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import { BsHeart, BsHeartFill, BsChatText } from "react-icons/bs";
 import FollowButton from "../components/FollowButton";
@@ -9,6 +9,7 @@ import type { User } from "../data/users";
 import { obtenerComentarios } from "../services/CommentService";
 import { toggleLike } from "../services/PostService";
 import { UserContext } from "../context/UserContext";
+import { getUserId, isUserInLikes } from "../utils/userHelpers";
 
 import "../styles/postCard.css";
 
@@ -18,16 +19,23 @@ type CardProps = {
 };
 
 function PostCard({ post, user }: CardProps) {
-  const { user: currentUser } = useContext(UserContext);
+  const { user: currentUser } = useContext(UserContext)!;
   const navigate = useNavigate();
 
   const [mostrarModal, setMostrarModal] = useState(false);
   const [cantidadComentarios, setCantidad] = useState(0);
 
+  const userId = getUserId(currentUser as { id?: string; _id?: string } | null);
+
   const [likesCount, setLikesCount] = useState(post.likes?.length || 0);
-  const [isLiked, setIsLiked] = useState(
-    currentUser ? post.likes?.includes(currentUser.id) : false,
+  const [isLiked, setIsLiked] = useState(() =>
+    isUserInLikes(post.likes, userId),
   );
+
+  useEffect(() => {
+    setLikesCount(post.likes?.length || 0);
+    setIsLiked(isUserInLikes(post.likes, userId));
+  }, [post.likes, userId]);
 
   useEffect(() => {
     async function fetchCantidad() {
@@ -48,8 +56,15 @@ function PostCard({ post, user }: CardProps) {
     setIsLiked(!isLiked);
     setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
 
+    const activeUserId = getUserId(currentUser as { id?: string; _id?: string });
+    if (!activeUserId) return;
+
     try {
-      await toggleLike(post._id, currentUser.id);
+      const updated = await toggleLike(post._id, activeUserId);
+      if (updated?.likes) {
+        setLikesCount(updated.likes.length);
+        setIsLiked(isUserInLikes(updated.likes, activeUserId));
+      }
     } catch (error) {
       console.error("Error al dar like:", error);
       setIsLiked(isLiked);

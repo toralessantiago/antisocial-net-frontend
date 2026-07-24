@@ -11,7 +11,7 @@ interface Tag {
 }
 
 function CreatePost() {
-  const { user } = useContext(UserContext);
+  const { user } = useContext(UserContext)!;
   const navigate = useNavigate();
 
   const [description, setDescription] = useState("");
