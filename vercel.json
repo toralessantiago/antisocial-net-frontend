@@ -3,6 +3,10 @@
     {
       "source": "/api/(.*)",
       "destination": "https://anti-social-documental-tp-3a2n.onrender.com/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
