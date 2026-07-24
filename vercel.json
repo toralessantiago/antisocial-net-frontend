@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://anti-social-documental-tp-3a2n.onrender.com/api/$1"
+    }
+  ]
+}
