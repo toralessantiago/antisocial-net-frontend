@@ -23,7 +23,7 @@ type UserContextValue = {
 export const UserContext = createContext<UserContextValue | null>(null);
 
 function toStoredUser(userData: User | Record<string, unknown>): User {
-  return normalizeUserFromApi(userData as Record<string, unknown>) as User;
+  return normalizeUserFromApi(userData as Record<string, unknown>) as unknown as User;
 }
 
 export function UserProvider({ children }: { children: ReactNode }) {
