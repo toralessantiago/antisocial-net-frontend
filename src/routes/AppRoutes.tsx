@@ -8,6 +8,7 @@ import CreatePost from "../pages/CreatePost";
 import Feed from "../pages/Feed"; 
 import ProtectedRoute from "../components/ProtectedRoute";
 import UserProfile from "../pages/UserProfile";
+import NotFound from "../pages/NotFound";
 
 function AppRoutes() {
   return (
@@ -37,7 +38,6 @@ function AppRoutes() {
         }
       />
 
-      {/* Corrección: Ahora crear un post requiere estar logueado */}
       <Route
         path="/create-post"
         element={
@@ -55,6 +55,8 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+    
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

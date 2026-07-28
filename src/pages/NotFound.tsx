@@ -4,7 +4,6 @@ import "../styles/pages/home.css"; // Compartimos el mismo CSS de layout
 function NotFound() {
   return (
     <div className="home-layout not-found-layout">
-      {/* Columna Izquierda (puede ser una imagen diferente o la misma) */}
       <div className="home-left">
         <img 
           src="/path/to/tu/imagen_principal_unaHur.png" 
@@ -15,7 +14,6 @@ function NotFound() {
         <p>Parece que te perdiste en el campus...</p>
       </div>
 
-      {/* Columna Derecha: Tarjeta de Error */}
       <div className="home-right-container">
         <div className="home-right auth-card text-center">
           <h1 className="error-code">404</h1>
