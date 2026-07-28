@@ -36,14 +36,15 @@ function PostDetail() {
   const [error, setError] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
 
-  // --- ESTADOS PARA LIKES ---
   const [likesCount, setLikesCount] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
 
-  // Estados para modales
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [editDescription, setEditDescription] = useState("");
+
+  const [editError, setEditError] = useState("");
+  const [editTouched, setEditTouched] = useState(false);
 
   const esMiPost = Boolean(
     usuarioLogueado &&
@@ -90,13 +91,10 @@ function PostDetail() {
     }
   }, [post, usuarioLogueado]);
 
-  // --- MANEJADOR DE LIKES (OPTIMISTIC UI) ---
   const handleLikeClick = async () => {
     if (!usuarioLogueado || !post) return;
 
-    const userId = getUserId(
-      usuarioLogueado as { id?: string; _id?: string },
-    );
+    const userId = getUserId(usuarioLogueado as { id?: string; _id?: string });
     if (!userId) return;
 
     setIsLiked(!isLiked);
@@ -125,13 +123,32 @@ function PostDetail() {
     }
   };
 
+  const validateEdit = (value: string) => {
+    if (!value.trim()) return "La descripción no puede estar vacía";
+    if (value.trim().length < 5) return "Debe tener al menos 5 caracteres";
+    return "";
+  };
+
   const handleEditarPost = async () => {
+    setEditTouched(true);
+    const errorMsg = validateEdit(editDescription);
+
+    if (errorMsg) {
+      setEditError(errorMsg);
+      return;
+    }
+
+    if (editDescription.trim() === post!.description) {
+      setShowEditModal(false);
+      return;
+    }
+
     try {
-      await editarPost(post!._id, editDescription);
+      await editarPost(post!._id, editDescription.trim());
       setShowEditModal(false);
       setRefreshKey((prev) => prev + 1);
-    } catch (err) {
-      alert("Error al editar");
+    } catch (err: any) {
+      setEditError(err.message || "Error de conexión al guardar los cambios");
     }
   };
 
@@ -147,7 +164,6 @@ function PostDetail() {
           <div className="pd-header d-flex justify-content-between align-items-center">
             <div className="d-flex align-items-center gap-3">
               {" "}
-              {/* Cambiado gap-2 por gap-3 para un poco más de aire */}
               <div className="d-flex align-items-center gap-2">
                 <div className="pd-avatar">
                   {autor?.nickname
@@ -255,19 +271,47 @@ function PostDetail() {
 
       <Modal
         show={showEditModal}
-        onHide={() => setShowEditModal(false)}
+        onHide={() => {
+          setShowEditModal(false);
+          setEditError("");
+          setEditTouched(false);
+          if (post) setEditDescription(post.description);
+        }}
         centered
       >
         <Modal.Header closeButton>
           <Modal.Title>Editar publicación</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form.Control
-            as="textarea"
-            rows={4}
-            value={editDescription}
-            onChange={(e) => setEditDescription(e.target.value)}
-          />
+          <Form.Group>
+            <Form.Control
+              as="textarea"
+              rows={4}
+              // Aplicamos clases dinámicas
+              className={
+                editError
+                  ? "input-error"
+                  : editTouched && editDescription.trim()
+                    ? "input-success"
+                    : ""
+              }
+              value={editDescription}
+              onChange={(e) => {
+                setEditDescription(e.target.value);
+                if (editTouched) {
+                  setEditError(validateEdit(e.target.value));
+                }
+              }}
+              onBlur={() => {
+                setEditTouched(true);
+                setEditError(validateEdit(editDescription));
+              }}
+            />
+            {/* Mensaje de error visual */}
+            {editError && (
+              <small className="text-danger mt-1 d-block">{editError}</small>
+            )}
+          </Form.Group>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowEditModal(false)}>
