@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import "../styles/pages/createPost.css";
 
-const API_URL =
-  import.meta.env.VITE_API_URL || "http://import.meta.env.VITE_API_URL:3000/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+
 interface Tag {
   _id: string;
   name: string;
@@ -19,8 +19,11 @@ function CreatePost() {
   const [tags, setTags] = useState<Tag[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [serverError, setServerError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     fetch(`${API_URL}/tags`)
@@ -49,18 +52,49 @@ function CreatePost() {
     );
   };
 
+  const validateDescription = (value: string) => {
+    if (!value.trim()) return "La descripción es obligatoria";
+    if (value.trim().length < 5) return "La descripción debe tener al menos 5 caracteres";
+    return "";
+  };
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setDescription(value);
+    
+    if (touched.description) {
+      setErrors((prev) => ({ ...prev, description: validateDescription(value) }));
+    }
+    if (serverError) setServerError("");
+  };
+
+  const handleBlur = () => {
+    setTouched((prev) => ({ ...prev, description: true }));
+    setErrors((prev) => ({ ...prev, description: validateDescription(description) }));
+  };
+
+  const getBorderClass = (name: string, value: string) => {
+    if (!touched[name]) return "";
+    if (errors[name]) return "input-error"; 
+    if (value.trim()) return "input-success"; 
+    return "";
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setServerError("");
     setSuccess("");
 
-    if (!description.trim()) {
-      setError("La descripción es obligatoria");
-      return;
+    setTouched({ description: true });
+    const descError = validateDescription(description);
+    
+    if (descError) {
+      setErrors({ description: descError });
+      return; 
     }
 
     if (!user) {
-      setError("Debés iniciar sesión");
+      setServerError("Debés iniciar sesión para publicar.");
       return;
     }
 
@@ -97,7 +131,7 @@ function CreatePost() {
       setTimeout(() => navigate("/profile"), 1200);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Error al crear el post";
-      setError(msg);
+      setServerError(msg);
     } finally {
       setLoading(false);
     }
@@ -114,23 +148,25 @@ function CreatePost() {
         <div className="create-post-right">
           <h2 className="auth-title">Nueva Publicación</h2>
 
-          {error && <div className="cp-error">{error}</div>}
-          {success && <div className="cp-success">{success}</div>}
-
-          <form onSubmit={handleSubmit} className="auth-form">
+          {/* Se usa noValidate para desactivar los errores de HTML por defecto */}
+          <form onSubmit={handleSubmit} className="auth-form" noValidate>
+            
             <div className="form-group">
               <label className="form-label">Descripción *</label>
               <textarea
-                className="form-control cp-textarea"
+                name="description"
+                className={`form-control cp-textarea ${getBorderClass("description", description)}`}
                 value={description}
-                onChange={(e) => {
-                  setDescription(e.target.value);
-                  if (error) setError("");
-                }}
+                onChange={handleDescriptionChange}
+                onBlur={handleBlur}
                 placeholder="¿Qué estás pensando?"
                 rows={4}
-                required
+                disabled={loading}
               />
+              {/* Mensaje de error personalizado debajo del input */}
+              {errors.description && (
+                <small className="text-danger">{errors.description}</small>
+              )}
             </div>
 
             <div className="form-group">
@@ -143,12 +179,14 @@ function CreatePost() {
                     value={url}
                     onChange={(e) => updateImageUrl(index, e.target.value)}
                     placeholder="https://ejemplo.com/imagen.jpg"
+                    disabled={loading}
                   />
                   {imageUrls.length > 1 && (
                     <button
                       type="button"
                       className="cp-btn-remove"
                       onClick={() => removeImageUrl(index)}
+                      disabled={loading}
                     >
                       ✕
                     </button>
@@ -159,6 +197,7 @@ function CreatePost() {
                 type="button"
                 className="cp-btn-add"
                 onClick={addImageUrl}
+                disabled={loading}
               >
                 + Agregar otra imagen
               </button>
@@ -173,6 +212,7 @@ function CreatePost() {
                     type="button"
                     className={`cp-tag-chip ${selectedTags.includes(tag._id) ? "selected" : ""}`}
                     onClick={() => toggleTag(tag._id)}
+                    disabled={loading}
                   >
                     {tag.name}
                   </button>
@@ -184,6 +224,14 @@ function CreatePost() {
                 )}
               </div>
             </div>
+
+            {/* Mensajes de error general del servidor o éxito */}
+            {serverError && (
+              <div className="text-danger text-center mb-2">{serverError}</div>
+            )}
+            {success && (
+              <div className="text-success text-center mb-2">{success}</div>
+            )}
 
             <button
               type="submit"
