@@ -94,7 +94,9 @@ function PostDetail() {
   const handleLikeClick = async () => {
     if (!usuarioLogueado || !post) return;
 
-    const userId = getUserId(usuarioLogueado as { id?: string; _id?: string });
+    const userId = getUserId(
+      usuarioLogueado as { id?: string; _id?: string },
+    );
     if (!userId) return;
 
     setIsLiked(!isLiked);
@@ -132,10 +134,10 @@ function PostDetail() {
   const handleEditarPost = async () => {
     setEditTouched(true);
     const errorMsg = validateEdit(editDescription);
-
+    
     if (errorMsg) {
       setEditError(errorMsg);
-      return;
+      return; 
     }
 
     if (editDescription.trim() === post!.description) {
@@ -148,7 +150,7 @@ function PostDetail() {
       setShowEditModal(false);
       setRefreshKey((prev) => prev + 1);
     } catch (err: any) {
-      setEditError(err.message || "Error de conexión al guardar los cambios");
+      setEditError(err.message || "Error al conectar con el servidor. Intenta nuevamente.");
     }
   };
 
@@ -163,7 +165,6 @@ function PostDetail() {
         <div className="pd-right w-100 mx-auto" style={{ maxWidth: "600px" }}>
           <div className="pd-header d-flex justify-content-between align-items-center">
             <div className="d-flex align-items-center gap-3">
-              {" "}
               <div className="d-flex align-items-center gap-2">
                 <div className="pd-avatar">
                   {autor?.nickname
@@ -273,7 +274,7 @@ function PostDetail() {
         show={showEditModal}
         onHide={() => {
           setShowEditModal(false);
-          setEditError("");
+          setEditError(""); 
           setEditTouched(false);
           if (post) setEditDescription(post.description);
         }}
@@ -287,14 +288,13 @@ function PostDetail() {
             <Form.Control
               as="textarea"
               rows={4}
-              // Aplicamos clases dinámicas
-              className={
+              className={`form-control ${
                 editError
                   ? "input-error"
                   : editTouched && editDescription.trim()
-                    ? "input-success"
-                    : ""
-              }
+                  ? "input-success"
+                  : ""
+              }`}
               value={editDescription}
               onChange={(e) => {
                 setEditDescription(e.target.value);
@@ -307,17 +307,24 @@ function PostDetail() {
                 setEditError(validateEdit(editDescription));
               }}
             />
-            {/* Mensaje de error visual */}
             {editError && (
               <small className="text-danger mt-1 d-block">{editError}</small>
             )}
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowEditModal(false)}>
+          <Button 
+            variant="secondary" 
+            onClick={() => setShowEditModal(false)}
+            style={{ borderRadius: "12px", padding: "8px 20px" }}
+          >
             Cancelar
           </Button>
-          <Button variant="primary" onClick={handleEditarPost}>
+          <Button 
+            variant="primary" 
+            onClick={handleEditarPost}
+            style={{ borderRadius: "12px", padding: "8px 20px", backgroundColor: "var(--accent)", border: "none" }}
+          >
             Guardar cambios
           </Button>
         </Modal.Footer>
