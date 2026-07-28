@@ -1,4 +1,5 @@
 import "../styles/pages/postDetail.css";
+import "../styles/components/components.css"; 
 import { useParams, useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { Spinner, Modal, Button, Form } from "react-bootstrap";
@@ -39,12 +40,15 @@ function PostDetail() {
   const [likesCount, setLikesCount] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
 
+  // Estados para Modales
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [editDescription, setEditDescription] = useState("");
 
+  // Estados para Validación Visual
   const [editError, setEditError] = useState("");
   const [editTouched, setEditTouched] = useState(false);
+  const [deleteError, setDeleteError] = useState(""); // Nuevo estado para errores al eliminar
 
   const esMiPost = Boolean(
     usuarioLogueado &&
@@ -118,10 +122,11 @@ function PostDetail() {
 
   const handleEliminarPost = async () => {
     try {
+      setDeleteError("");
       await eliminarPostPorId(post!._id);
       navigate("/");
-    } catch (err) {
-      alert("Error al eliminar");
+    } catch (err: any) {
+      setDeleteError(err.message || "Error de conexión al intentar eliminar");
     }
   };
 
@@ -205,7 +210,10 @@ function PostDetail() {
                 <Button
                   variant="outline-danger"
                   size="sm"
-                  onClick={() => setShowDeleteModal(true)}
+                  onClick={() => {
+                    setShowDeleteModal(true);
+                    setDeleteError(""); 
+                  }}
                 >
                   <LuTrash2 />
                 </Button>
@@ -270,6 +278,7 @@ function PostDetail() {
         </div>
       </div>
 
+      {/* --- MODAL EDICIÓN --- */}
       <Modal
         show={showEditModal}
         onHide={() => {
@@ -313,24 +322,24 @@ function PostDetail() {
             )}
           </Form.Group>
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer className="border-top-0">
+          {/* Usamos las clases globales btn-rounded */}
           <Button 
-            variant="secondary" 
+            className="btn-rounded btn-rounded-secondary"
             onClick={() => setShowEditModal(false)}
-            style={{ borderRadius: "12px", padding: "8px 20px" }}
           >
             Cancelar
           </Button>
           <Button 
-            variant="primary" 
+            className="btn-rounded btn-rounded-primary"
             onClick={handleEditarPost}
-            style={{ borderRadius: "12px", padding: "8px 20px", backgroundColor: "var(--accent)", border: "none" }}
           >
             Guardar cambios
           </Button>
         </Modal.Footer>
       </Modal>
 
+      {/* --- MODAL ELIMINAR --- */}
       <Modal
         show={showDeleteModal}
         onHide={() => setShowDeleteModal(false)}
@@ -341,12 +350,22 @@ function PostDetail() {
         </Modal.Header>
         <Modal.Body>
           ¿Estás seguro de que querés borrar esto? No se puede deshacer.
+          
+          {deleteError && (
+            <small className="text-danger mt-2 d-block text-center">{deleteError}</small>
+          )}
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+        <Modal.Footer className="border-top-0">
+          <Button 
+            className="btn-rounded btn-rounded-secondary" 
+            onClick={() => setShowDeleteModal(false)}
+          >
             Cancelar
           </Button>
-          <Button variant="danger" onClick={handleEliminarPost}>
+          <Button 
+            className="btn-rounded btn-rounded-danger" 
+            onClick={handleEliminarPost}
+          >
             Sí, eliminar
           </Button>
         </Modal.Footer>
