@@ -1,6 +1,6 @@
 import type { Comment } from "../data/comments";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://import.meta.env.VITE_API_URL:3000/api";
 
 export async function obtenerComentarios(id: string): Promise<Comment[]> {
   const respuesta = await fetch(`${API_URL}/comments/post/${id}`);

@@ -4,7 +4,7 @@ import { UserContext } from "../context/UserContext";
 import { FaAt, FaEye, FaEyeSlash } from "react-icons/fa";
 import "../styles/pages/auth.css";
 
-const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/users`;
+const API_URL = `${import.meta.env.VITE_API_URL || "http://import.meta.env.VITE_API_URL:3000/api"}/users`;
 
 function Login() {
   const ctx = useContext(UserContext);

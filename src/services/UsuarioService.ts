@@ -1,6 +1,6 @@
 import type { User } from "../data/users";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://import.meta.env.VITE_API_URL:3000/api";
 
 export async function obtenerUsuarios(): Promise<User[]> {
     const respuesta = await fetch(`${API_URL}/users`);

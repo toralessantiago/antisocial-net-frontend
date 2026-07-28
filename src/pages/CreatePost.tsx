@@ -4,7 +4,7 @@ import { UserContext } from "../context/UserContext";
 import "../styles/pages/createPost.css";
 
 const API_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+  import.meta.env.VITE_API_URL || "http://import.meta.env.VITE_API_URL:3000/api";
 interface Tag {
   _id: string;
   name: string;

@@ -9,7 +9,7 @@ import type { User } from "../data/users";
 import { obtenerUserPorId } from "../services/UsuarioService";
 import { normalizeUserFromApi } from "../utils/userHelpers";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://import.meta.env.VITE_API_URL:3000/api";
 
 type UserContextValue = {
   user: User | null;
