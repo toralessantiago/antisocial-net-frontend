@@ -57,6 +57,7 @@ function CommentForm({ postId, onCommentAdded }: CommentFormProps) {
         }}
         placeholder="Escribí un comentario..."
         rows={3}
+        style={{ resize: "none" }}
         required
       />
       <button
