@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import "../styles/pages/home.css"; // Compartimos el mismo CSS de layout
 
 function NotFound() {
   return (
