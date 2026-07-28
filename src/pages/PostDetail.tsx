@@ -288,6 +288,7 @@ function PostDetail() {
             <Form.Control
               as="textarea"
               rows={4}
+              style={{ resize: "none" }}
               className={`form-control ${
                 editError
                   ? "input-error"
