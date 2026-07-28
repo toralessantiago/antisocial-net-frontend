@@ -43,7 +43,6 @@ function Profile() {
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  // Nuevos estados para listas de seguidores/seguidos
   const [showFollowersModal, setShowFollowersModal] = useState(false);
   const [showFollowingModal, setShowFollowingModal] = useState(false);
 
@@ -54,6 +53,9 @@ function Profile() {
   });
   const [isUpdating, setIsUpdating] = useState(false);
 
+  const [profileError, setProfileError] = useState("");
+  const [profileTouched, setProfileTouched] = useState(false);
+
   useEffect(() => {
     refreshCurrentUser?.().catch(() => {});
   }, []);
@@ -63,7 +65,7 @@ function Profile() {
       if (!currentUser) return;
       try {
         setCargando(true);
-        const userId = currentUser.id || currentUser._id || ""; // Añadimos || ""
+        const userId = currentUser.id || currentUser._id || "";
 
         const [posts, comments] = await Promise.all([
           obtenerPostsPorUsuario(userId),
@@ -92,9 +94,16 @@ function Profile() {
   };
 
   const handleGuardarCambios = async () => {
-    if (!currentUser) return; // Línea de seguridad
+    if (!currentUser) return;
+
+    setProfileTouched(true);
+    if (!editFormData.fullname.trim()) {
+      setProfileError("El nombre completo es obligatorio.");
+      return;
+    }
 
     setIsUpdating(true);
+    setProfileError("");
     try {
       const userId = currentUser.id || currentUser._id || "";
       const respuesta = await updateUser(userId, editFormData);
@@ -106,8 +115,8 @@ function Profile() {
 
       updateCurrentUser(usuarioActualizado);
       setShowModal(false);
-    } catch (error) {
-      alert("Hubo un error al guardar los cambios.");
+    } catch (error: any) {
+      setProfileError(error.message || "Hubo un error al guardar los cambios.");
     } finally {
       setIsUpdating(false);
     }
@@ -132,7 +141,16 @@ function Profile() {
         user={currentUser}
         posts={misPosts}
         selectedAvatar={selectedAvatar}
-        onEditProfile={() => setShowModal(true)}
+        onEditProfile={() => {
+          setEditFormData({
+            fullname: currentUser.fullname || "",
+            bio: currentUser.bio || "",
+            location: currentUser.location || "",
+          });
+          setProfileError("");
+          setProfileTouched(false);
+          setShowModal(true);
+        }}
         onAvatarClick={() => setShowAvatarModal(true)}
         onLogout={handleLogout}
         onFollowersClick={() => setShowFollowersModal(true)}
@@ -187,7 +205,6 @@ function Profile() {
               <p className="mb-1">
                 <em>"{c.content}"</em>
               </p>
-              {/* BOTÓN VERDE APLICADO AQUÍ */}
               <Link
                 to={`/post/${typeof c.post === "string" ? c.post : c.post?._id}`}
                 className="btn btn-outline-success btn-sm mt-2"
@@ -324,23 +341,49 @@ function Profile() {
               <Form.Label>Nombre completo</Form.Label>
               <Form.Control
                 type="text"
-                value={editFormData.fullname}
-                onChange={(e) =>
-                  setEditFormData({ ...editFormData, fullname: e.target.value })
+                className={
+                  profileTouched && !editFormData.fullname.trim()
+                    ? "input-error"
+                    : profileTouched && editFormData.fullname.trim()
+                    ? "input-success"
+                    : ""
                 }
+                value={editFormData.fullname}
+                onChange={(e) => {
+                  setEditFormData({ ...editFormData, fullname: e.target.value });
+                  if (profileTouched) {
+                    setProfileError(
+                      e.target.value.trim() ? "" : "El nombre completo es obligatorio."
+                    );
+                  }
+                }}
+                onBlur={() => {
+                  setProfileTouched(true);
+                  if (!editFormData.fullname.trim()) {
+                    setProfileError("El nombre completo es obligatorio.");
+                  }
+                }}
               />
+              {profileTouched && !editFormData.fullname.trim() && (
+                <small className="text-danger mt-1 d-block">
+                  El nombre completo es obligatorio.
+                </small>
+              )}
             </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>Biografía</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={3}
+                style={{ resize: "none" }}
                 value={editFormData.bio}
                 onChange={(e) =>
                   setEditFormData({ ...editFormData, bio: e.target.value })
                 }
               />
             </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>Ubicación</Form.Label>
               <Form.Control
@@ -351,18 +394,22 @@ function Profile() {
                 }
               />
             </Form.Group>
+
+            {profileError && (
+              <div className="text-danger text-center mb-2">{profileError}</div>
+            )}
           </Form>
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer className="border-top-0">
           <Button
-            variant="secondary"
+            className="btn-rounded btn-rounded-secondary"
             onClick={() => setShowModal(false)}
             disabled={isUpdating}
           >
             Cancelar
           </Button>
           <Button
-            variant="primary"
+            className="btn-rounded btn-rounded-primary"
             onClick={handleGuardarCambios}
             disabled={isUpdating}
           >
@@ -371,6 +418,7 @@ function Profile() {
         </Modal.Footer>
       </Modal>
 
+      {/* MODAL: SELECCIONAR AVATAR */}
       <Modal
         show={showAvatarModal}
         onHide={() => setShowAvatarModal(false)}
