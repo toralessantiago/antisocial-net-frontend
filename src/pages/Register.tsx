@@ -4,7 +4,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "../styles/pages/auth.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
-
+console.log("TESTER - LA URL DE LA API ES:", API_URL);
 function Register() {
   const navigate = useNavigate();
 
